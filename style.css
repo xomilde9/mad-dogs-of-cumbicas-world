@@ -1,0 +1,5 @@
+html,body{margin:0;height:100%;background:#0b0d14;color:#9aa;font-family:monospace;overflow:hidden}
+#wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%}
+#game{width:min(100vw,calc((100vh - 28px)*1.5));height:auto;aspect-ratio:3/2;image-rendering:pixelated;image-rendering:crisp-edges;background:#000;outline:none;box-shadow:0 0 40px #000}
+#help{font-size:12px;padding-top:8px;text-align:center}
+#help b{color:#e8c660}
