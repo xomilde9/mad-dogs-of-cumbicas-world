@@ -72,6 +72,7 @@
     grey: { roof: '#7a7f8a', roofL: '#9aa0aa', roofD: '#585c66', wall: '#b8b4a8', trim: '#585c66', win: '#7098c0', door: '#6a6e78' },
     yellow: { roof: '#b84a3a', roofL: '#d86a5a', roofD: '#8a3428', wall: '#f4dc80', trim: '#8a3428', win: '#7ab8e0', door: '#7a4a2a' },
     brick: { roof: '#5a6070', roofL: '#7a8090', roofD: '#3a4050', wall: '#b8604a', trim: '#7a3a2a', win: '#a8d0e8', door: '#4a3a2a' },
+    green: { roof: '#2f8a4c', roofL: '#52b266', roofD: '#1f6a3c', wall: '#f0f0e0', trim: '#1f6a3c', win: '#9ad0f0', door: '#e8c040' },
     rust: { roof: '#8a5a3a', roofL: '#a87a52', roofD: '#5e3a22', wall: '#9a8a7a', trim: '#5e3a22', win: '#6a88a0', door: '#3a3a44' },
   };
   SP.building = function (w, h, st, doorX, o = {}) {
