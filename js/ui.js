@@ -198,13 +198,27 @@
         ctx.fillStyle = 'rgba(8,10,20,.78)'; const v = G.visited || {};
         for (let cy = 0; cy < world.h / 4; cy++) for (let cxx = 0; cxx < world.w / 4; cxx++) if (!v[cxx + ',' + cy]) ctx.fillRect(ox + cxx * 4 * S, oy + cy * 4 * S, 4 * S, 4 * S);
         world.dyn.forEach(d => { if (d.show && d.show(G.flags)) { ctx.fillStyle = '#e03030'; ctx.fillRect(ox + d.x * S, oy + d.y * S, S, S); } });
+        // Marcadores de lojas, serviços, NPCs e pontos examináveis.
+        const marker = (x, y, color, shape = 'square') => {
+          if (x == null || y == null) return;
+          const mx = ox + x * S, my = oy + y * S;
+          ctx.fillStyle = '#101018'; ctx.fillRect(mx - 2, my - 2, 8, 8); ctx.fillStyle = color;
+          if (shape === 'diamond') { ctx.fillRect(mx + 1, my - 2, 2, 2); ctx.fillRect(mx - 1, my, 6, 2); }
+          else if (shape === 'circle') { ctx.beginPath(); ctx.arc(mx + 1, my + 1, 2.5, 0, Math.PI * 2); ctx.fill(); }
+          else ctx.fillRect(mx, my, 4, 4);
+        };
+        const doorMark = (p, color, shape) => { if (p) marker(p[0], p[1], color, shape); };
+        doorMark(M.places.mercado, '#f8cf35', 'diamond'); doorMark(M.places.oficina, '#e89b43'); doorMark(M.places.casa, '#75c7f0'); doorMark(M.places.base, '#78d28a'); doorMark(M.places.galpao, '#d85a75');
+        for (let i = 1; i <= 8; i++) if (M.places.gyms[i]) doorMark(M.places.gyms[i].door, '#f8e070', 'diamond');
+        (M.story.npcs.cumbica || []).forEach(n => marker(n.x, n.y, '#6de0a0', 'circle'));
+        Object.keys(world.inter).forEach(k => { const idx = Number(k); marker(idx % world.w, Math.floor(idx / world.w), '#74b9ef'); });
         const seenZ = new Set();
         world.zones.forEach(z => { if (!z.name || seenZ.has(z.name) || z.w < 6) return; seenZ.add(z.name); const key = Math.floor((z.x + z.w / 2) / 4) + ',' + Math.floor((z.y + z.h / 2) / 4); if (!v[key]) return; ctx.strokeStyle = 'rgba(255,240,160,.6)'; ctx.strokeRect(ox + z.x * S + .5, oy + z.y * S + .5, z.w * S - 1, z.h * S - 1); });
         M.places.labels.forEach(([t, x, y]) => M.text(ctx, t, ox + x * S, oy + y * S, '#ffffff', 9, '#101018'));
         for (let i = 1; i <= 8; i++) { const gy = M.places.gyms[i]; if (!gy) continue; const done = G.flags['badge' + i]; ctx.fillStyle = done ? '#f8d848' : '#fff'; ctx.fillRect(ox + gy.door[0] * S - 2, oy + gy.door[1] * S - 2, 7, 7); ctx.fillStyle = '#101018'; ctx.fillRect(ox + gy.door[0] * S - 1, oy + gy.door[1] * S - 1, 5, 5); M.text(ctx, String(i), ox + gy.door[0] * S, oy + gy.door[1] * S - 4, done ? '#f8d848' : '#fff', 10, '#000'); }
         if (G.map === 'cumbica' && Math.floor(performance.now() / 300) % 2) { ctx.fillStyle = '#ff3a8a'; ctx.fillRect(ox + G.x * S - 2, oy + G.y * S - 2, 7, 7); }
         const px = 8 + world.w * S + 10; M.panel(ctx, px, 8, W - px - 8, 304, 'light'); M.text(ctx, 'CUMBICA', px + 8, 14, DARK, 14); M.text(ctx, 'Guarulhos/SP', px + 8, 30, '#6a6a7a', 11);
-        const lg = [['#e03030', 'Barreira'], ['#f8d848', 'Ginásio vencido'], ['#ffffff', 'Ginásio'], ['#ff3a8a', 'Você']]; lg.forEach((l, i) => { ctx.fillStyle = l[0]; ctx.fillRect(px + 8, 56 + i * 16, 8, 8); ctx.strokeStyle = '#2a2a3a'; ctx.strokeRect(px + 7.5, 55.5 + i * 16, 9, 9); M.text(ctx, l[1], px + 22, 52 + i * 16, DARK, 11); });
+        const lg = [['#f8cf35', 'Loja / ginásio'], ['#e89b43', 'Oficina'], ['#6de0a0', 'Pessoa / NPC'], ['#74b9ef', 'Interação'], ['#ff3a8a', 'Você']]; lg.forEach((l, i) => { ctx.fillStyle = l[0]; ctx.fillRect(px + 8, 56 + i * 16, 8, 8); ctx.strokeStyle = '#2a2a3a'; ctx.strokeRect(px + 7.5, 55.5 + i * 16, 9, 9); M.text(ctx, l[1], px + 22, 52 + i * 16, DARK, 10); });
         M.text(ctx, 'Insígnias: ' + (G.flags.badges || 0) + '/8', px + 8, 126, DARK, 13);
         for (let i = 1; i <= 8; i++) M.text(ctx, (G.flags['badge' + i] ? '★ ' : '· ') + (M.places.gyms[i] ? M.places.gyms[i].name.slice(0, 17) : ''), px + 8, 144 + (i - 1) * 13, G.flags['badge' + i] ? '#a07a10' : '#7a7a8a', 10);
         const vis = Object.keys(v).length, tot = (world.w / 4) * (world.h / 4); M.text(ctx, `Explorado: ${Math.min(100, Math.floor(vis * 100 / tot))}%`, px + 8, 270, DARK, 12); M.text(ctx, 'Z/X/M: fechar', px + 8, 290, '#6a6a7a', 11);
@@ -224,7 +238,7 @@
         M.panel(ctx, 8, 32, 214, 256, 'light'); const top = Math.max(0, c - 8);
         l.slice(top, top + 9).forEach((x, i) => { if (top + i === c) tri(ctx, 14, 44 + i * 27); M.text(ctx, (x.q.main ? '* ' : '') + x.q.name, 28, 40 + i * 27, x.s === 2 ? '#7a8a7a' : DARK, 11); M.text(ctx, x.s === 2 ? 'Concluída' : 'Ativa', 28, 53 + i * 27, x.s === 2 ? '#4a9a4a' : '#c07a20', 10); });
         M.panel(ctx, 228, 32, 244, 256, 'hud');
-        if (l[c]) { const q = l[c].q; M.text(ctx, q.name, 238, 40, DARK, M.tw(q.name, 14) > 224 ? 11 : 14); M.wrap(q.desc, 224, 12).forEach((t, i) => M.text(ctx, t, 238, 64 + i * 15, '#3a3a4a', 12)); M.text(ctx, 'Objetivo:', 238, 160, '#a05010', 12); M.wrap(q.obj(G), 224, 12).forEach((t, i) => M.text(ctx, t, 238, 176 + i * 15, DARK, 12)); const pr = q.prog ? q.prog(G) : ''; if (pr) M.text(ctx, 'Progresso: ' + pr, 238, 222, '#2a6a2a', 12); M.wrap('Recompensa: ' + q.reward, 224, 11).forEach((t, i) => M.text(ctx, t, 238, 244 + i * 13, '#6a4a1a', 11)); }
+        if (l[c]) { const q = l[c].q; M.text(ctx, q.name, 238, 40, DARK, M.tw(q.name, 14) > 224 ? 11 : 14); M.wrap(q.desc, 224, 11).slice(0, 4).forEach((t, i) => M.text(ctx, t, 238, 62 + i * 13, '#3a3a4a', 11)); M.text(ctx, 'OBJETIVO', 238, 119, '#a05010', 11); M.wrap(q.obj(G), 224, 10).slice(0, 3).forEach((t, i) => M.text(ctx, t, 238, 133 + i * 12, DARK, 10)); const dest = q.where ? q.where(G) : 'Consulte o mapa para localizar o objetivo.'; M.text(ctx, 'PARA ONDE IR', 238, 174, '#276b9a', 11); M.wrap(dest, 224, 10).slice(0, 3).forEach((t, i) => M.text(ctx, t, 238, 188 + i * 12, DARK, 10)); const pr = q.prog ? q.prog(G) : ''; if (pr) M.text(ctx, 'Progresso: ' + pr, 238, 235, '#2a6a2a', 10); M.wrap('Recompensa: ' + q.reward, 224, 10).slice(0, 2).forEach((t, i) => M.text(ctx, t, 238, 254 + i * 11, '#6a4a1a', 10)); }
         else M.text(ctx, 'Nenhuma missão ainda.', 250, 60, DARK, 14);
         foot(ctx, 'Cima/Baixo: escolher   X/Q: voltar');
       },
