@@ -329,10 +329,10 @@
   // ---------- menu principal ----------
   UI.mainMenu = async () => {
     for (; ;) {
-      const i = await M.choose({ items: ['Equipe', 'Mochila', 'Mapa', 'Missões', 'Perfil', 'Salvar', 'Opções', 'Fechar'], x: 340, y: 8, above: false });
+      const i = await M.choose({ items: ['Equipe', 'Mochila', 'Mapa', 'Missões', 'Perfil', 'Salvar', 'Exportar save', 'Opções', 'Fechar'], x: 340, y: 8, above: false });
       if (i === 0) await UI.party(); else if (i === 1) await UI.bag(); else if (i === 2) await UI.map(); else if (i === 3) await UI.quests(); else if (i === 4) await UI.profile();
       else if (i === 5) { const k = await M.choose({ items: ['Salvar', 'Cancelar'], x: 340, y: 8, cw: 90 }); if (k === 0) { M.Save.save(); M.audio.sfx('save'); await M.say(null, 'Progresso salvo!', { auto: 900 }); } }
-      else if (i === 6) await UI.settings(); else return;
+      else if (i === 6) { if (M.Save.export()) { M.audio.sfx('save'); await M.say(null, 'Backup do progresso baixado! Guarde esse arquivo em um lugar seguro.', { auto: 1500 }); } else await M.say(null, 'Não foi possível exportar o save.'); } else if (i === 7) await UI.settings(); else return;
     }
   };
 
