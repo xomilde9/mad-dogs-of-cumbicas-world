@@ -96,6 +96,17 @@
   add('cerbero', 'Cérbero', 'Rottweiler Gigante', 'bruto', [84, 86, 74, 52], 2, 'Coleira Negra', 'Leal', 'O cão de guarda do Galpão. Muda de humor com um assobio.', 0, { c: '#16161c', patch: 'tan', pc: '#a85a28', snc: '#a85a28', ear: 'flop', ec: '#0e0e12', tail: 'stub', len: 22, h: 13, hr: 7, sn: 4, col: '#c0212a', stud: true, socks: true });
   add('marreta', 'Marreta', 'Pitbull Cinza', 'rua', [56, 62, 50, 50], 1, 'Campo', 'Brincalhão', 'Só pensa em bola. Quando perde a bola, o bairro inteiro sabe.', 40, { c: '#a8a4a0', c2: '#f0ece8', ear: 'round', ec: '#7a7672', tail: 'whip', len: 20, h: 11, hr: 6, sn: 3 });
   add('bolinha', 'Bolinha', 'SRD Preto e Branco', 'rua', [30, 30, 30, 40], 0, 'Viela', 'Medroso', 'Fugiu de casa pra ver o mundo. Voltou com saudade.', 0, { c: '#2b2b36', c2: '#f4f4f4', patch: 'spots', pc: '#f4f4f4', ear: 'flop', ec: '#1c1c26', tail: 'curl', len: 16, h: 8, hr: 5, sn: 4 });
+  // Demônios zombeteiros: inimigos sobrenaturais que infestaram Cumbica.
+  // Não são recrutáveis; os cães continuam sendo os aliados de Gabe.
+  D.DEMON_SP = S('Risonho', 'Demônio Zombeteiro', 'caotico', [58, 62, 48, 56], 0, 'Cumbica Corrompida', 'Cruel', 'Criatura infernal que ri enquanto espalha o caos pelas ruas.', 0, { demon: true });
+  D.makeDemon = (lv, zone) => {
+    const d = D.makeDog(D.DEMON_SP, lv);
+    d.kind = 'demon';
+    const names = zone === 'Industrial' ? ['Sucata Risonha', 'Ferro-Velho'] : zone === 'Viela' ? ['Risada do Beco', 'Zombeteiro'] : ['Risonho', 'Diabrete de Cumbica'];
+    d.name = names[Math.floor(Math.random() * names.length)];
+    d.trust = 0;
+    return d;
+  };
   D.PLAYABLE_WILD = D.SPECIES.filter(s => s && s.rec > 0);
 
   // ---------- itens ----------
