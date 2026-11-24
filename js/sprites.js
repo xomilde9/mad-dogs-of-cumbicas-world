@@ -332,6 +332,32 @@
     outline(c, M.shade(body, .28));
     dcache.set(sp.id, c); return c;
   };
+  // ---------------- SPRITES DE BATALHA 64x64 ----------------
+  // Cada sprite ocupa um quadro quadrado transparente. A arte original é
+  // ampliada por vizinho mais próximo e centralizada sem deformar a proporção.
+  const battleDogCache = new Map();
+  SP.battleDog = function (sp) {
+    if (battleDogCache.has(sp.id)) return battleDogCache.get(sp.id);
+    const [frame, fx] = mkc(64, 64);
+    fx.imageSmoothingEnabled = false;
+    const source = SP.dogBig(sp);
+    const dw = 56, dh = 45;
+    fx.clearRect(0, 0, 64, 64);
+    fx.drawImage(source, 0, 0, source.width, source.height, Math.round((64 - dw) / 2), 60 - dh, dw, dh);
+    battleDogCache.set(sp.id, frame);
+    return frame;
+  };
+  const battlePortraitCache = new WeakMap();
+  SP.battlePortrait = function (portrait) {
+    if (!portrait) return null;
+    if (battlePortraitCache.has(portrait)) return battlePortraitCache.get(portrait);
+    const [frame, fx] = mkc(64, 64);
+    fx.imageSmoothingEnabled = false;
+    fx.clearRect(0, 0, 64, 64);
+    fx.drawImage(portrait, 0, 0, 32, 32, 0, 0, 64, 64);
+    battlePortraitCache.set(portrait, frame);
+    return frame;
+  };
   SP.dogSmall = function (sp, dir, f) {
     const key = 's' + sp.id + dir + f; if (dcache.has(key)) return dcache.get(key);
     const L = sp.look, [c, x] = mkc(16, 16), body = L.c, belly = L.c2 || M.shade(body, 1.2), dark = M.shade(body, .78);
