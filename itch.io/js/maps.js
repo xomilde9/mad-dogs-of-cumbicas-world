@@ -56,6 +56,60 @@
           dot(r2, 2 + r2 % 11, 4 + (r2 >>> 5) % 9, '#986638');
         }
       }
+      // Bordas orgânicas entre terrenos: transições em pixel art, sem alterar tiles ou colisões.
+      const groundAt = (a, b) => this.inb(a, b) ? this.g[this.i(a, b)] : 'void';
+      for (let j = 0; j < this.h; j++) for (let k = 0; k < this.w; k++) {
+        const n = groundAt(k, j), ox = k * T, oy = j * T;
+        const edge = (px, py, color, w = 1, h = 1) => { x.fillStyle = color; x.fillRect(ox + px, oy + py, w, h); };
+        const around = [[0,-1],[1,0],[0,1],[-1,0]];
+        if (n === 'grass') {
+          for (let d = 0; d < 4; d++) {
+            const [dx,dy] = around[d], other = groundAt(k + dx, j + dy);
+            if (other === 'dirt' || other === 'gravel') {
+              const seed = hash(k, j, 20 + d), p = 2 + seed % 10;
+              if (d === 0 || d === 2) {
+                const yy = d === 0 ? 0 : 15;
+                edge(p, yy, '#3d8747', 2, 1); edge(p + 1, yy + (d === 0 ? 1 : -1), '#a0d77c', 1, 1);
+                edge((p + 6) % 13 + 1, yy, '#5da95b', 1, 1);
+              } else {
+                const xx = d === 3 ? 0 : 15;
+                edge(xx, p, '#3d8747', 1, 2); edge(xx + (d === 3 ? 1 : -1), p + 1, '#a0d77c', 1, 1);
+              }
+            }
+          }
+        } else if (n === 'water') {
+          for (let d = 0; d < 4; d++) {
+            const [dx,dy] = around[d], other = groundAt(k + dx, j + dy);
+            if (other !== 'water') {
+              const seed = hash(k, j, 40 + d), p = 2 + seed % 9;
+              x.fillStyle = '#a8d9f4';
+              if (d === 0) { x.fillRect(ox + p, oy, 4, 1); x.fillRect(ox + p + 1, oy + 1, 2, 1); }
+              if (d === 2) { x.fillRect(ox + p, oy + 15, 4, 1); x.fillRect(ox + p + 1, oy + 14, 2, 1); }
+              if (d === 3) { x.fillRect(ox, oy + p, 1, 4); x.fillRect(ox + 1, oy + p + 1, 1, 2); }
+              if (d === 1) { x.fillRect(ox + 15, oy + p, 1, 4); x.fillRect(ox + 14, oy + p + 1, 1, 2); }
+              x.fillStyle = '#3977b8';
+              if (d === 0) x.fillRect(ox + p + 4, oy + 1, 2, 1);
+              if (d === 2) x.fillRect(ox + p + 4, oy + 14, 2, 1);
+            }
+          }
+        } else if (n === 'dirt') {
+          for (let d = 0; d < 4; d++) {
+            const [dx,dy] = around[d], other = groundAt(k + dx, j + dy);
+            if (other === 'grass') {
+              const seed = hash(k, j, 60 + d), p = 2 + seed % 10;
+              if (d === 0 || d === 2) {
+                const yy = d === 0 ? 0 : 15;
+                edge(p, yy, '#b18a55', 3, 1);
+                edge(p + 1, yy + (d === 0 ? 1 : -1), '#d8bd8a', 2, 1);
+              } else {
+                const xx = d === 3 ? 0 : 15;
+                edge(xx, p, '#b18a55', 1, 3);
+                edge(xx + (d === 3 ? 1 : -1), p + 1, '#d8bd8a', 1, 2);
+              }
+            }
+          }
+        }
+      }
       this.items.slice().sort((a, b) => (a.y + a.h) - (b.y + b.h)).forEach(it => { x.drawImage(it.b || SP.objs[it.n].c, it.x * T, it.y * T); });
       this.canvas = c; return c;
     }
