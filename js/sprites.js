@@ -232,6 +232,9 @@
     if (p.extra === 'coleira') { R(x, '#c0212a', side ? 5 : 6, 12, side ? 3 : 4, 1); if (down) { R(x, '#e8e8e8', 5, 14, 1, 1); R(x, '#e8e8e8', 10, 14, 1, 1); } }
     if (p.extra === 'wheelchair') { R(x, '#303744', 1, 19, 2, 4); R(x, '#303744', 13, 19, 2, 4); R(x, '#9098a8', 3, 18, 10, 1); R(x, '#707987', 4, 19, 8, 1); R(x, '#707987', 5, 20, 1, 2); R(x, '#707987', 10, 20, 1, 2); }
     if (p.extra === 'crawl') { R(x, pa, 2, 18, 12, 5); R(x, sh, 5, 17, 8, 4); R(x, sk, 1, 17, 4, 4); R(x, hr, 1, 16, 4, 2); R(x, sk, 5, 20, 2, 2); }
+    if (p.pattern === 'stars') { const star = '#f4d66a'; [[4,13],[10,14],[6,17],[11,19],[3,21]].forEach(([sx,sy]) => { R(x, star, sx, sy, 1, 1); R(x, '#fff2b0', sx, sy+1, 1, 1); }); }
+    if (p.pattern === 'green-orbs') { [[4,14],[10,17],[6,20]].forEach(([sx,sy]) => { R(x, '#8acb70', sx, sy, 2, 2); R(x, '#d8f0a0', sx, sy, 1, 1); }); }
+    if (p.emblem === 'horseshoe') { R(x, '#d9b34a', 6, 8, 4, 1); R(x, '#d9b34a', 6, 8, 1, 3); R(x, '#d9b34a', 9, 8, 1, 3); R(x, '#d9b34a', 7, 11, 2, 1); }
     if (p.cap) {
       const cc = p.cap, cd = M.shade(cc, .75);
       if (down) { R(x, cc, 3, 1, 10, 4); R(x, cd, 3, 5, 10, 1); R(x, M.shade(cc, 1.2), 5, 1, 4, 1); }
