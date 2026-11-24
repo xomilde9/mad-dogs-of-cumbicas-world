@@ -543,4 +543,53 @@
   }
   SP.personWalkSheet = function (look) { return makeWalkSheet((p, d, f) => SP.person(p, d, f), look); };
   SP.dogWalkSheet = function (species) { return makeWalkSheet((p, d, f) => SP.dogSmall(p, d, f), species); };
+
+  // Urban art pass: deterministic surface details, preserving sprite dimensions.
+  function texture(c, strength, seed) {
+    const ctx=c.getContext('2d'), d=ctx.getImageData(0,0,c.width,c.height), a=d.data, old=new Uint8ClampedArray(a);
+    const w=c.width,h=c.height,r=M.seed(seed);
+    for(let y=1;y<h-1;y++) for(let x=1;x<w-1;x++){
+      const i=(y*w+x)*4;
+      if(old[i+3]!==255) continue;
+      const same=j=>old[j+3]===255 && old[j]===old[i] && old[j+1]===old[i+1] && old[j+2]===old[i+2];
+      const n=r(); if(!same(i-4)||!same(i+4)) continue;
+      const top=same(i-w*4), bottom=same(i+w*4);
+      let delta=!top&&bottom?strength:top&&!bottom?-strength:top&&bottom&&n<.19?(n<.09?-strength:strength*.65):0;
+      if(!delta || Math.max(old[i],old[i+1],old[i+2])<45) continue;
+      a[i]=old[i]+delta; a[i+1]=old[i+1]+delta*.8; a[i+2]=old[i+2]+delta*.55;
+    }
+    ctx.putImageData(d,0,0);return c;
+  }
+  for(const name of ['road','roadH','roadV','zebra','runway','concrete','walk','gravel','wood','tile','wallI','wallG','dirt','grass0','grass1','grass2','tall','pitch','court']) {
+    if(tl[name]) texture(tl[name],12,name.length*173);
+  }
+  for(const name of ['road','roadH','roadV','zebra']) {
+    const x=tl[name].getContext('2d'); R(x,'#777487',0,15,16,1);
+  }
+  // Layered broadleaf canopy, with trunk and clustered leaf highlights.
+  O('tree',2,2,(x,c)=>{
+    R(x,'#483044',13,20,7,11);R(x,'#96634c',14,21,3,9);
+    const clusters=[[8,12,7,7],[16,8,9,7],[24,13,7,8],[12,19,10,7],[22,19,8,6]];
+    for(const [a,b,rx,ry] of clusters) E(x,a,b,rx,ry,'#253f46');
+    for(const [a,b,rx,ry] of clusters){E(x,a-1,b-2,rx-1,ry-1,'#47784c');E(x,a-2,b-3,rx*.65,ry*.55,'#80a652');}
+    const r=M.seed(437);for(let i=0;i<38;i++){const a=3+Math.floor(r()*26),b=3+Math.floor(r()*19);const p=x.getImageData(a,b,1,1).data;if(p[3]&&p[1]>65)R(x,i%3?'#628e4e':'#a0b75c',a,b,1,1);}
+    outline(c,'#26313d');
+  });
+  for(const [name,obj] of Object.entries(ob)) texture(obj.c,13,name.length*271);
+  const urbanBuilding=SP.building;
+  SP.building=function(w,h,st,doorX,o={}){
+    const c=urbanBuilding(w,h,st,doorX,o),x=c.getContext('2d'),W=c.width,H=c.height,rh=H-32;
+    if(rh>8){
+      R(x,'#302b45',1,rh-2,W-2,2);
+      for(let a=5;a<W-4;a+=12){R(x,'#c6a39a',a,3,4,1);}
+    }
+    for(let a=1;a<W-2;a+=16){R(x,'#51465b',a,H-4,1,3);}
+    return texture(c,14,W*31+H);
+  };
+  const detailCache=new WeakSet();
+  for(const name of ['person','dogSmall','dogBig','battleDog','battleDemon','battlePortrait']){
+    const original=SP[name];if(typeof original!=='function')continue;
+    SP[name]=function(...args){const c=original.apply(this,args);if(c&&!detailCache.has(c)){texture(c,name==='person'?15:18,391);detailCache.add(c);}return c;};
+  }
+
 })(window.MD);
