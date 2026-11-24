@@ -146,14 +146,4 @@
     return M.clamp((sp.rec / 100) * hpF * lvF * trF * it.mult * pm, 0.02, 0.98);
   };
 
-  // ---------- bairros de Guarulhos (mapa geral, posições aproximadas) ----------
-  D.HOODS = [
-    { id: 'cumbica', name: 'Cumbica', x: 70, y: 38 }, { id: 'aeroporto', name: 'Aeroporto', x: 86, y: 33 }, { id: 'pimentas', name: 'Pimentas', x: 88, y: 56 },
-    { id: 'dutra', name: 'Jd. Pres. Dutra', x: 78, y: 62 }, { id: 'bonsucesso', name: 'Bonsucesso', x: 84, y: 14 }, { id: 'cocaia', name: 'Cocaia', x: 62, y: 76 },
-    { id: 'saojoao', name: 'São João', x: 56, y: 50 }, { id: 'centro', name: 'Centro', x: 44, y: 38 }, { id: 'galvao', name: 'Vila Galvão', x: 52, y: 22 },
-    { id: 'picanco', name: 'Picanço', x: 34, y: 20 }, { id: 'cecap', name: 'Cecap', x: 28, y: 44 }, { id: 'barros', name: 'Vila Barros', x: 40, y: 56 },
-    { id: 'taboao', name: 'Taboão', x: 22, y: 64 }, { id: 'pontegrande', name: 'Ponte Grande', x: 48, y: 72 }, { id: 'gopouva', name: 'Gopoúva', x: 36, y: 34 },
-  ];
-  D.HOOD_LINKS = [['cumbica', 'aeroporto'], ['cumbica', 'saojoao'], ['cumbica', 'dutra'], ['dutra', 'pimentas'], ['aeroporto', 'bonsucesso'], ['saojoao', 'centro'], ['saojoao', 'barros'], ['saojoao', 'cocaia'],
-    ['centro', 'galvao'], ['centro', 'gopouva'], ['gopouva', 'picanco'], ['gopouva', 'cecap'], ['cecap', 'taboao'], ['barros', 'pontegrande'], ['barros', 'cecap'], ['cocaia', 'pontegrande'], ['aeroporto', 'pimentas']];
 })(window.MD);
