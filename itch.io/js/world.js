@@ -183,7 +183,7 @@
       for (const e of list) {
         if (e.pl) { ctx.drawImage(SP.person(SP.GABE, p.dir, p.fr), Math.round(e.x * T) - 4, Math.round(e.y * T) - 16); continue; }
         const n = e.n, ex = Math.round(e.x * T), ey = Math.round(e.y * T);
-        if (n.dog) ctx.drawImage(SP.dogSmall(D.SPECIES[D.SP[n.dog]], n.dir, n.fr || 0), ex - 4, ey - 8); else ctx.drawImage(SP.person(n.look, n.dir, n.fr || 0), ex - 4, ey - 16);
+        if (n.dog) ctx.drawImage(SP.dogSmall(D.SPECIES[D.SP[n.dog]], n.dir, n.fr || 0), ex - 8, ey - 16); else ctx.drawImage(SP.person(n.look, n.dir, n.fr || 0), ex - 4, ey - 16);
       }
       ctx.restore();
       for (const n of npcsHere()) if (n.excl > 0) { const [x, y] = lerp(n); M.text(ctx, '!', Math.round((x * T - cx) * 2) + 12, Math.round((y * T - cy - 20) * 2), '#e03030', 22, '#fff'); }
