@@ -125,7 +125,8 @@
     peca: { name: 'Peça da Moto', cat: 'Chave', key: true, desc: 'Um carburador. O Zé está atrás disso.' },
     foto: { name: 'Foto Antiga', cat: 'Chave', key: true, desc: 'Foto da Praça dos Cachorros nos anos 90.' },
   };
-  D.SHOPS = { mercado: ['agua', 'racaoR', 'osso', 'petisco'], petisco: ['petisco', 'racao', 'biscoito', 'brinquedo', 'coleira'], ricaGames: ['lasanhaPifPaf'] };
+  D.ITEMS.oleoEletrico = { name: 'Óleo Elétrico', cat: 'Cura', price: 260, buff: 'spd', desc: 'Bebida energética secreta do bar. Dá VELOCIDADE +1 na próxima batalha.' };
+  D.SHOPS = { mercado: ['agua', 'racaoR', 'osso', 'petisco'], petisco: ['petisco', 'racao', 'biscoito', 'brinquedo', 'coleira'], ricaGames: ['lasanhaPifPaf'], goromi: ['oleoEletrico'] };
 
   // ---------- criação / stats ----------
   let uid = 1;
