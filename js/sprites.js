@@ -623,4 +623,32 @@
     }return c;
   };
 
+
+  // External art registry. Logical dimensions remain independent of image resolution.
+  SP.art = new WeakMap();
+  SP.registerArt = function(base, url) {
+    if(!base || !url) return Promise.resolve(false);
+    return new Promise(resolve=>{
+      const img=new Image();
+      img.onload=()=>{SP.art.set(base,img);if(M.maps)for(const m of Object.values(M.maps))m.canvas=null;resolve(true);};
+      img.onerror=()=>resolve(false);img.src=url;
+    });
+  };
+  SP.drawArt = function(ctx,base,x,y,w,h) {
+    if(!base)return;
+    ctx.drawImage(SP.art.get(base)||base,x,y,w===undefined?base.width:w,h===undefined?base.height:h);
+  };
+  // Optional manifest: absent images retain the existing art, never block startup.
+  SP.loadArt = async function(url='assets/art.json'){
+    try {
+      const response=await fetch(url);if(!response.ok)return;
+      const manifest=await response.json(), root=new URL(url,document.baseURI);
+      const jobs=[];
+      for(const [key,file] of Object.entries(manifest.tiles||{}))if(SP.tiles[key])jobs.push(SP.registerArt(SP.tiles[key],new URL(file,root).href));
+      for(const [key,file] of Object.entries(manifest.objects||{}))if(SP.objs[key])jobs.push(SP.registerArt(SP.objs[key].c,new URL(file,root).href));
+      for(const [key,file] of Object.entries(manifest.gabe||{})){const [dir,frame]=key.split(':');if(['up','down','left','right'].includes(dir))jobs.push(SP.registerArt(SP.person(SP.GABE,dir,Number(frame)),new URL(file,root).href));}
+      await Promise.all(jobs);
+    }catch(e){console.warn('Optional art pack unavailable',e);}
+  };
+  window.addEventListener('load',()=>SP.loadArt(),{once:true});
 })(window.MD);
