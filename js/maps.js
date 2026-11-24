@@ -25,11 +25,35 @@
     render() {
       if (this.canvas) return this.canvas;
       const c = M.mk(this.w * T, this.h * T), x = M.cx(c);
+      // Microdetalhes determinísticos: enriquecem o terreno sem mudar colisões ou escala dos tiles.
+      const hash = (a, b, s) => { let v = (a * 374761393 + b * 668265263 + s * 1442695041) | 0; v = Math.imul(v ^ (v >>> 13), 1274126177); return (v ^ (v >>> 16)) >>> 0; };
       for (let j = 0; j < this.h; j++) for (let k = 0; k < this.w; k++) {
-        let n = this.g[this.i(k, j)]; const t = n === 'grass' ? SP.tiles['grass' + ((k * 7 + j * 13 + (k * j)) % 3)] : SP.tiles[n]; x.drawImage(t, k * T, j * T);
-        if (n === 'water') {
+        let n = this.g[this.i(k, j)]; const ox = k * T, oy = j * T;
+        const t = n === 'grass' ? SP.tiles['grass' + ((k * 7 + j * 13 + (k * j)) % 3)] : SP.tiles[n]; x.drawImage(t, ox, oy);
+        const dot = (seed, px, py, color, w = 1, h = 1) => { x.fillStyle = color; x.fillRect(ox + px, oy + py, w, h); };
+        const r1 = hash(k, j, 1), r2 = hash(k, j, 2), r3 = hash(k, j, 3), r4 = hash(k, j, 4);
+        if (n === 'grass') {
+          dot(r1, 2 + r1 % 12, 2 + (r1 >>> 5) % 11, '#83cc78');
+          dot(r2, 2 + r2 % 12, 2 + (r2 >>> 6) % 11, '#438d4b');
+          if ((r3 % 4) === 0) { const px = 3 + r3 % 10, py = 4 + (r3 >>> 4) % 8; dot(r3, px, py, '#347f42'); dot(r3, px + 1, py - 1, '#a0d77c'); }
+        } else if (n === 'dirt' || n === 'gravel') {
+          dot(r1, 1 + r1 % 13, 2 + (r1 >>> 5) % 12, n === 'dirt' ? '#e0c18c' : '#c4bbac', 2, 1);
+          dot(r2, 1 + r2 % 13, 2 + (r2 >>> 5) % 12, n === 'dirt' ? '#a98150' : '#81796f');
+          if ((r3 % 3) === 0) dot(r3, 3 + r3 % 10, 3 + (r3 >>> 4) % 10, '#ead2a5');
+        } else if (n === 'walk' || n === 'concrete') {
+          dot(r1, 2 + r1 % 11, 2 + (r1 >>> 5) % 11, '#f0eadb');
+          dot(r2, 2 + r2 % 11, 2 + (r2 >>> 5) % 11, n === 'walk' ? '#aaa596' : '#777d88');
+          if ((r3 % 5) === 0) dot(r3, 4 + r3 % 8, 4 + (r3 >>> 4) % 8, '#b8b4aa', 2, 1);
+        } else if (n === 'road' || n === 'roadH' || n === 'roadV') {
+          if ((r1 % 3) === 0) dot(r1, 2 + r1 % 12, 2 + (r1 >>> 5) % 12, '#747985');
+          if ((r2 % 4) === 0) dot(r2, 2 + r2 % 12, 2 + (r2 >>> 5) % 12, '#484d59', 2, 1);
+        } else if (n === 'water') {
+          if ((r1 % 3) === 0) { const px = 2 + r1 % 10, py = 3 + (r1 >>> 5) % 11; dot(r1, px, py, '#8bc5f2', 3, 1); dot(r1, px + 1, py + 1, '#2e70bb', 2, 1); }
           const nw = (a, b) => this.inb(a, b) && this.g[this.i(a, b)] === 'water';
-          x.fillStyle = '#1d4f9a'; if (!nw(k, j - 1)) x.fillRect(k * T, j * T, T, 2); if (!nw(k, j + 1)) x.fillRect(k * T, j * T + T - 2, T, 2); if (!nw(k - 1, j)) x.fillRect(k * T, j * T, 2, T); if (!nw(k + 1, j)) x.fillRect(k * T + T - 2, j * T, 2, T);
+          x.fillStyle = '#1d4f9a'; if (!nw(k, j - 1)) x.fillRect(ox, oy, T, 2); if (!nw(k, j + 1)) x.fillRect(ox, oy + T - 2, T, 2); if (!nw(k - 1, j)) x.fillRect(ox, oy, 2, T); if (!nw(k + 1, j)) x.fillRect(ox + T - 2, oy, 2, T);
+        } else if (n === 'wood') {
+          dot(r1, 2 + r1 % 11, 3 + (r1 >>> 5) % 10, '#edc17b', 2, 1);
+          dot(r2, 2 + r2 % 11, 4 + (r2 >>> 5) % 9, '#986638');
         }
       }
       this.items.slice().sort((a, b) => (a.y + a.h) - (b.y + b.h)).forEach(it => { x.drawImage(it.b || SP.objs[it.n].c, it.x * T, it.y * T); });
