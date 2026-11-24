@@ -14,8 +14,8 @@
   M.typeChip = chip;
   const tri = (ctx, x, y, col = '#d03030') => { ctx.fillStyle = col; for (let i = 0; i < 5; i++) ctx.fillRect(x + i, y + i, 1, 9 - i * 2); };
   const bg = (ctx, c1 = '#2a3e62', c2 = '#223250') => { ctx.fillStyle = c1; ctx.fillRect(0, 0, W, H); ctx.fillStyle = c2; for (let y = 0; y < H; y += 16) for (let x = (y / 16 % 2) * 16; x < W; x += 32) ctx.fillRect(x, y, 16, 16); };
-  const head = (ctx, t) => { M.rr(ctx, 0, 0, W, 26, '#1a2640'); M.text(ctx, t, 12, 5, '#f8e8a0', 16); };
-  const foot = (ctx, t) => { M.rr(ctx, 0, H - 22, W, 22, '#1a2640'); M.text(ctx, t, 10, H - 19, '#c8d4f0', 12); };
+  const head = (ctx, t) => { M.rr(ctx, 0, 0, W, 26, '#111c30'); M.text(ctx, t, 12, 4, '#fff1a8', 17, '#080d18'); };
+  const foot = (ctx, t) => { M.rr(ctx, 0, H - 22, W, 22, '#111c30'); M.text(ctx, t, 10, H - 19, '#ffffff', 13, '#080d18'); };
 
   // ---------- diálogo ----------
   M.who = (n) => {
@@ -182,6 +182,17 @@
     M.openOv(ov);
   });
 
+  // ---------- rastreador de missão ----------
+  UI.trackMission = async (missionId) => {
+    const G = M.G, active = M.story.missions.filter(q => q.status(G) === 1);
+    const q = M.story.missions.find(x => x.id === (missionId || G.flags.trackedMission) && x.status(G) === 1) || active.find(x => x.main) || active[0];
+    if (!q) return M.say('RASTREADOR', 'Você não tem missões ativas no momento. Abra Q para consultar o diário.');
+    G.flags.trackedMission = q.id; M.Save.save();
+    const objective = typeof q.obj === 'function' ? q.obj(G) : q.obj;
+    const destination = q.where ? q.where(G) : 'Consulte o mapa e converse com os moradores.';
+    return M.say('RASTREADOR DE MISSÃO', `${q.name}\n\nOBJETIVO: ${objective}\n\nDESTINO: ${destination}\n\nAperte M para abrir o mapa. O destino rastreado será destacado quando estiver nesta região.`);
+  };
+
   // ---------- mapa de Cumbica ----------
   UI.map = () => new Promise(res => {
     const G = M.G, world = M.maps.cumbica, S = 3, cvs = M.mk(world.w, world.h), cx = M.cx(cvs);
@@ -198,6 +209,8 @@
         ctx.fillStyle = 'rgba(8,10,20,.78)'; const v = G.visited || {};
         for (let cy = 0; cy < world.h / 4; cy++) for (let cxx = 0; cxx < world.w / 4; cxx++) if (!v[cxx + ',' + cy]) ctx.fillRect(ox + cxx * 4 * S, oy + cy * 4 * S, 4 * S, 4 * S);
         world.dyn.forEach(d => { if (d.show && d.show(G.flags)) { ctx.fillStyle = '#e03030'; ctx.fillRect(ox + d.x * S, oy + d.y * S, S, S); } });
+        const tracked = M.story.missions.find(q => q.id === G.flags.trackedMission && q.status(G) === 1);
+        if (tracked) { let target = null; if (tracked.id === 'm1') target = M.places.oficina; else if (tracked.id === 'm2') target = M.places.gyms[(G.flags.badges || 0) + 1]?.door; else if (tracked.id === 'm3') target = G.flags.peca ? M.places.oficina : [75, 93]; else if (tracked.id === 'm4') target = M.places.galpao; if (target) { const tx = target[0], ty = target[1]; ctx.fillStyle = '#fff'; ctx.fillRect(ox + tx * S - 3, oy + ty * S - 3, 10, 10); ctx.fillStyle = '#ed3b45'; ctx.fillRect(ox + tx * S - 1, oy + ty * S - 1, 6, 6); M.text(ctx, 'DESTINO', ox + tx * S + 8, oy + ty * S - 6, '#fff', 10, '#111'); } }
         // Marcadores de lojas, serviços, NPCs e pontos examináveis.
         const marker = (x, y, color, shape = 'square') => {
           if (x == null || y == null) return;
@@ -232,15 +245,15 @@
     const G = M.G; let c = 0;
     const all = () => M.story.missions.map(q => ({ q, s: q.status(G) })).filter(x => x.s > 0).sort((a, b) => (a.s === 2) - (b.s === 2) || (b.q.main ? 1 : 0) - (a.q.main ? 1 : 0));
     const ov = {
-      key(a) { const l = all(); if (a === 'back' || a === 'quest') { M.audio.sfx('back'); M.closeOv(ov); res(); } else if (a === 'up' && l.length) { c = (c + l.length - 1) % l.length; M.audio.sfx('menu'); } else if (a === 'down' && l.length) { c = (c + 1) % l.length; M.audio.sfx('menu'); } },
+      key(a) { const l = all(); if (a === 'back' || a === 'quest') { M.audio.sfx('back'); M.closeOv(ov); res(); } else if (a === 'up' && l.length) { c = (c + l.length - 1) % l.length; M.audio.sfx('menu'); } else if (a === 'down' && l.length) { c = (c + 1) % l.length; M.audio.sfx('menu'); } else if (a === 'track' && l[c]) { M.audio.sfx('ok'); M.closeOv(ov); res(); UI.trackMission(l[c].q.id); } },
       draw(ctx) {
         bg(ctx, '#3a4a2a', '#304022'); head(ctx, 'MISSÕES'); const l = all(); if (c >= l.length) c = Math.max(0, l.length - 1);
         M.panel(ctx, 8, 32, 214, 256, 'light'); const top = Math.max(0, c - 8);
-        l.slice(top, top + 9).forEach((x, i) => { if (top + i === c) tri(ctx, 14, 44 + i * 27); M.text(ctx, (x.q.main ? '* ' : '') + x.q.name, 28, 40 + i * 27, x.s === 2 ? '#7a8a7a' : DARK, 11); M.text(ctx, x.s === 2 ? 'Concluída' : 'Ativa', 28, 53 + i * 27, x.s === 2 ? '#4a9a4a' : '#c07a20', 10); });
+        l.slice(top, top + 9).forEach((x, i) => { if (top + i === c) tri(ctx, 14, 44 + i * 27); M.text(ctx, (x.q.main ? '* ' : '') + x.q.name, 28, 40 + i * 27, x.s === 2 ? '#59675a' : '#20283a', 12, '#fff'); M.text(ctx, x.s === 2 ? 'Concluída' : 'Ativa', 28, 54 + i * 27, x.s === 2 ? '#267a36' : '#995000', 11, '#fff'); });
         M.panel(ctx, 228, 32, 244, 256, 'hud');
-        if (l[c]) { const q = l[c].q; M.text(ctx, q.name, 238, 40, DARK, M.tw(q.name, 14) > 224 ? 11 : 14); M.wrap(q.desc, 224, 11).slice(0, 4).forEach((t, i) => M.text(ctx, t, 238, 62 + i * 13, '#3a3a4a', 11)); M.text(ctx, 'OBJETIVO', 238, 119, '#a05010', 11); M.wrap(q.obj(G), 224, 10).slice(0, 3).forEach((t, i) => M.text(ctx, t, 238, 133 + i * 12, DARK, 10)); const dest = q.where ? q.where(G) : 'Consulte o mapa para localizar o objetivo.'; M.text(ctx, 'PARA ONDE IR', 238, 174, '#276b9a', 11); M.wrap(dest, 224, 10).slice(0, 3).forEach((t, i) => M.text(ctx, t, 238, 188 + i * 12, DARK, 10)); const pr = q.prog ? q.prog(G) : ''; if (pr) M.text(ctx, 'Progresso: ' + pr, 238, 235, '#2a6a2a', 10); M.wrap('Recompensa: ' + q.reward, 224, 10).slice(0, 2).forEach((t, i) => M.text(ctx, t, 238, 254 + i * 11, '#6a4a1a', 10)); }
+        if (l[c]) { const q = l[c].q; M.text(ctx, q.name, 238, 40, '#20283a', M.tw(q.name, 14) > 224 ? 12 : 15, '#fff'); M.wrap(q.desc, 224, 12).slice(0, 3).forEach((t, i) => M.text(ctx, t, 238, 62 + i * 15, '#283044', 12, '#fff')); M.text(ctx, 'OBJETIVO', 238, 110, '#8a4300', 12, '#fff'); M.wrap(q.obj(G), 224, 11).slice(0, 2).forEach((t, i) => M.text(ctx, t, 238, 125 + i * 14, '#20283a', 11, '#fff')); const dest = q.where ? q.where(G) : 'Consulte o mapa para localizar o objetivo.'; M.text(ctx, 'PARA ONDE IR', 238, 158, '#155b8a', 12, '#fff'); M.wrap(dest, 224, 11).slice(0, 3).forEach((t, i) => M.text(ctx, t, 238, 173 + i * 14, '#20283a', 11, '#fff')); const pr = q.prog ? q.prog(G) : ''; if (pr) M.text(ctx, 'Progresso: ' + pr, 238, 222, '#17602b', 11, '#fff'); M.wrap('Recompensa: ' + q.reward, 224, 11).slice(0, 2).forEach((t, i) => M.text(ctx, t, 238, 240 + i * 13, '#65410d', 11, '#fff')); }
         else M.text(ctx, 'Nenhuma missão ainda.', 250, 60, DARK, 14);
-        foot(ctx, 'Cima/Baixo: escolher   X/Q: voltar');
+        foot(ctx, '↑/↓: escolher   E: rastrear missão   X/Q: voltar');
       },
     };
     M.openOv(ov);
