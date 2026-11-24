@@ -6,10 +6,10 @@
 
   // ---------- cenários ----------
   const BGS = {
-    rua: { sky: ['#705184', '#efa08c'], gr: ['#554364', '#8d7096'], deco: 'city' },
+    rua: { sky: ['#7ab8e8', '#cfe6f6'], gr: ['#6e727e', '#8a8e9a'], deco: 'city' },
     praca: { sky: ['#8cc8f0', '#e0f0fa'], gr: ['#5aa860', '#7cc47a'], deco: 'trees' },
     campo: { sky: ['#6ab0ec', '#d4ecfa'], gr: ['#4f9e52', '#6fbf6a'], deco: 'trees' },
-    viela: { sky: ['#49335f', '#c58aa7'], gr: ['#594364', '#9675a0'], deco: 'wall' },
+    viela: { sky: ['#a08ac0', '#e8c8d8'], gr: ['#8a7a70', '#a89a8e'], deco: 'wall' },
     industrial: { sky: ['#a8a8b8', '#d8d8e0'], gr: ['#7a7a82', '#9a9aa2'], deco: 'factory' },
     base: { sky: ['#e8884a', '#f8d08a'], gr: ['#5a5e6a', '#7a7e8a'], deco: 'city' },
     ginasio: { sky: ['#3a3a58', '#52527a'], gr: ['#8a6a4a', '#a98a64'], deco: 'hall' },
@@ -27,13 +27,6 @@
     g = x.createLinearGradient(0, 130, 0, 222); g.addColorStop(0, b.gr[0]); g.addColorStop(1, b.gr[1]); x.fillStyle = g; x.fillRect(0, 130, W, 92);
     x.fillStyle = 'rgba(255,255,255,.12)'; for (let i = 0; i < 30; i++) x.fillRect(R() * W, 134 + R() * 84, 14 + R() * 20, 2);
     x.fillStyle = 'rgba(0,0,0,.22)'; x.beginPath(); x.ellipse(372, 150, 64, 13, 0, 0, 7); x.fill(); x.beginPath(); x.ellipse(112, 205, 84, 16, 0, 0, 7); x.fill();
-    // Pixel-scale masonry, ground wear and illuminated battle platforms.
-    const rand=M.seed(key.length*997+17);
-    for(let i=0;i<240;i++){const px=Math.floor(rand()*W),py=132+Math.floor(rand()*88);x.fillStyle=i%3?'rgba(42,25,61,.12)':'rgba(255,215,185,.18)';x.fillRect(px,py,1+Math.floor(rand()*4),1);}
-    for(const [px,py,rx,ry] of [[372,150,64,13],[112,205,84,16]]){
-      x.fillStyle='rgba(48,26,65,.28)';x.beginPath();x.ellipse(px,py,rx,ry,0,0,7);x.fill();
-      x.strokeStyle='rgba(229,184,226,.55)';x.lineWidth=2;x.beginPath();x.ellipse(px,py-2,rx-4,ry-3,0,0,7);x.stroke();
-    }
     return bgCache[key] = c;
   }
 
@@ -82,7 +75,7 @@
     }
     function sprite(ctx, dog, S, x, y, sc, flip) {
       if (!dog) return; const img = dog.kind === 'demon' ? SP.battleDemon(D.SPECIES[dog.sp]) : SP.battleDog(D.SPECIES[dog.sp]); ctx.save(); ctx.globalAlpha = S.a * (S.blink && Math.floor(performance.now() / 70) % 2 ? .25 : 1);
-      ctx.translate(x + S.ox, y + S.oy); ctx.scale((flip ? -1 : 1) * sc * S.sc, sc * S.sc); SP.drawArt(ctx,img,-32,-64,64,64); ctx.restore();
+      ctx.translate(x + S.ox, y + S.oy); ctx.scale((flip ? -1 : 1) * sc * S.sc, sc * S.sc); ctx.drawImage(img, -32, -64, 64, 64); ctx.restore();
     }
     function hud(ctx, d, S, x, y, mine) {
       if (!d) return; const mx = D.stats(d).hp; M.panel(ctx, x, y, 200, mine ? 70 : 58, 'light');
@@ -94,7 +87,7 @@
     }
     function draw(ctx) {
       ctx.drawImage(bgImg(B.bg), 0, 0);
-      if (B.trainerShow > 0 && B.trainer && B.trainer.por) { ctx.save(); ctx.globalAlpha = Math.min(1, B.trainerShow); SP.drawArt(ctx,SP.battlePortrait(B.trainer.por), 330 + (1 - Math.min(1, B.trainerShow)) * 80, 70, 96, 96); ctx.restore(); }
+      if (B.trainerShow > 0 && B.trainer && B.trainer.por) { ctx.save(); ctx.globalAlpha = Math.min(1, B.trainerShow); ctx.drawImage(SP.battlePortrait(B.trainer.por), 0, 0, 64, 64, 330 + (1 - Math.min(1, B.trainerShow)) * 80, 70, 96, 96); ctx.restore(); }
       sprite(ctx, B.dogF, B.fo, 372, 148, 1.4, false); sprite(ctx, B.dogP, B.pl, 112, 208, 2.1, true);
       B.fxs.forEach(f => fxDraw(ctx, f));
       if (B.ball) { const b = B.ball; ctx.fillStyle = '#e8c860'; ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, 7); ctx.fill(); ctx.strokeStyle = '#6a4a1a'; ctx.lineWidth = 2; ctx.stroke(); }

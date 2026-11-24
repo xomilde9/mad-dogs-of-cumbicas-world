@@ -239,14 +239,14 @@
       Wd.cam = [cx, cy];
       ctx.fillStyle = '#0a0a12'; ctx.fillRect(0, 0, W, H);
       ctx.save(); ctx.scale(2, 2); ctx.translate(-cx, -cy); const bc = m.render();
-      const sx = Math.max(0, cx), sy = Math.max(0, cy), sw = Math.min(mw - sx, vw + (cx < 0 ? cx : 0)), sh = Math.min(mh - sy, vh + (cy < 0 ? cy : 0)); ctx.drawImage(bc, sx*2, sy*2, sw*2, sh*2, sx, sy, sw, sh);
-      for (const d of m.dyn) if (d.show && d.show(G.flags) && d.x * T + T > cx && d.x * T < cx + vw && d.y * T + T > cy && d.y * T < cy + vh) SP.drawArt(ctx,SP.objs[d.n].c, d.x * T, d.y * T);
+      const sx = Math.max(0, cx), sy = Math.max(0, cy), sw = Math.min(mw - sx, vw + (cx < 0 ? cx : 0)), sh = Math.min(mh - sy, vh + (cy < 0 ? cy : 0)); ctx.drawImage(bc, sx, sy, sw, sh, sx, sy, sw, sh);
+      for (const d of m.dyn) if (d.show && d.show(G.flags) && d.x * T + T > cx && d.x * T < cx + vw && d.y * T + T > cy && d.y * T < cy + vh) ctx.drawImage(SP.objs[d.n].c, d.x * T, d.y * T);
       const list = []; for (const n of npcsHere()) { const [x, y] = lerp(n); list.push({ y, n, x }); } list.push({ y: ppx === undefined ? 0 : ppy, pl: 1, x: ppx });
       list.sort((a, b) => a.y - b.y);
       for (const e of list) {
-        if (e.pl) { SP.drawArt(ctx,SP.person(SP.GABE, p.dir, p.fr), Math.round(e.x * T) - 8, Math.round(e.y * T) - 32); continue; }
+        if (e.pl) { ctx.drawImage(SP.person(SP.GABE, p.dir, p.fr), Math.round(e.x * T) - 8, Math.round(e.y * T) - 32); continue; }
         const n = e.n, ex = Math.round(e.x * T), ey = Math.round(e.y * T);
-        if (n.dog) SP.drawArt(ctx,SP.dogSmall(D.SPECIES[D.SP[n.dog]], n.dir, n.fr || 0), ex - 8, ey - 32); else ctx.drawImage(SP.person(n.look, n.dir, n.fr || 0), ex - 8, ey - 32);
+        if (n.dog) ctx.drawImage(SP.dogSmall(D.SPECIES[D.SP[n.dog]], n.dir, n.fr || 0), ex - 8, ey - 32); else ctx.drawImage(SP.person(n.look, n.dir, n.fr || 0), ex - 8, ey - 32);
       }
       ctx.restore();
       for (const n of npcsHere()) if (n.excl > 0) { const [x, y] = lerp(n); M.text(ctx, '!', Math.round((x * T - cx) * 2) + 12, Math.round((y * T - cy - 20) * 2), '#e03030', 22, '#fff'); }

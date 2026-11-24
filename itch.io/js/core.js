@@ -69,10 +69,10 @@ window.MD = window.MD || {};
   // ---------- painéis ----------
   M.rr = (ctx, x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(x + 2, y, w - 4, h); ctx.fillRect(x, y + 2, w, h - 4); ctx.fillRect(x + 1, y + 1, w - 2, h - 2); };
   M.panel = (ctx, x, y, w, h, kind = 'light') => {
-    if (kind === 'dark') { M.rr(ctx, x, y, w, h, '#c7a9e7'); M.rr(ctx, x + 3, y + 3, w - 6, h - 6, '#55418a'); M.rr(ctx, x + 5, y + 5, w - 10, h - 10, '#30234e'); }
-    else if (kind === 'hud') { M.rr(ctx, x, y, w, h, '#352742'); M.rr(ctx, x + 2, y + 2, w - 4, h - 4, '#f2ecd0'); M.rr(ctx, x + 4, y + 4, w - 8, h - 8, '#e4dcb8'); }
+    if (kind === 'dark') { M.rr(ctx, x, y, w, h, '#e8c660'); M.rr(ctx, x + 3, y + 3, w - 6, h - 6, '#27445a'); M.rr(ctx, x + 5, y + 5, w - 10, h - 10, '#1d3547'); }
+    else if (kind === 'hud') { M.rr(ctx, x, y, w, h, '#383848'); M.rr(ctx, x + 2, y + 2, w - 4, h - 4, '#f2ecd0'); M.rr(ctx, x + 4, y + 4, w - 8, h - 8, '#e4dcb8'); }
     else if (kind === 'blue') { M.rr(ctx, x, y, w, h, '#202838'); M.rr(ctx, x + 2, y + 2, w - 4, h - 4, '#4a6a98'); M.rr(ctx, x + 4, y + 4, w - 8, h - 8, '#dfe8f4'); }
-    else { M.rr(ctx, x, y, w, h, '#2a2a3a'); M.rr(ctx, x + 2, y + 2, w - 4, h - 4, '#e6c8ed'); M.rr(ctx, x + 3, y + 3, w - 6, h - 6, '#fff0df'); }
+    else { M.rr(ctx, x, y, w, h, '#2a2a3a'); M.rr(ctx, x + 2, y + 2, w - 4, h - 4, '#fbf7ea'); M.rr(ctx, x + 3, y + 3, w - 6, h - 6, '#f2eccf'); }
   };
 
   // ---------- input ----------

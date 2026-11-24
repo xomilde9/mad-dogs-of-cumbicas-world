@@ -24,12 +24,12 @@
     zoneAt(x, y) { for (let k = this.zones.length - 1; k >= 0; k--) { const z = this.zones[k]; if (x >= z.x && y >= z.y && x < z.x + z.w && y < z.y + z.h) return z; } return { name: this.name, enc: this.enc || null, bg: this.bg }; }
     render() {
       if (this.canvas) return this.canvas;
-      const c = M.mk(this.w * T * 2, this.h * T * 2), x = M.cx(c); x.scale(2,2);
+      const c = M.mk(this.w * T, this.h * T), x = M.cx(c);
       // Microdetalhes determinísticos: enriquecem o terreno sem mudar colisões ou escala dos tiles.
       const hash = (a, b, s) => { let v = (a * 374761393 + b * 668265263 + s * 1442695041) | 0; v = Math.imul(v ^ (v >>> 13), 1274126177); return (v ^ (v >>> 16)) >>> 0; };
       for (let j = 0; j < this.h; j++) for (let k = 0; k < this.w; k++) {
         let n = this.g[this.i(k, j)]; const ox = k * T, oy = j * T;
-        const t = n === 'grass' ? SP.tiles['grass' + ((k * 7 + j * 13 + (k * j)) % 3)] : SP.tiles[n]; SP.drawArt(x,t,ox,oy,T,T);
+        const t = n === 'grass' ? SP.tiles['grass' + ((k * 7 + j * 13 + (k * j)) % 3)] : SP.tiles[n]; x.drawImage(t, ox, oy);
         const dot = (seed, px, py, color, w = 1, h = 1) => { x.fillStyle = color; x.fillRect(ox + px, oy + py, w, h); };
         const r1 = hash(k, j, 1), r2 = hash(k, j, 2), r3 = hash(k, j, 3), r4 = hash(k, j, 4);
         if (n === 'grass') {
@@ -110,7 +110,7 @@
           }
         }
       }
-      this.items.slice().sort((a, b) => (a.y + a.h) - (b.y + b.h)).forEach(it => { SP.drawArt(x,it.b || SP.objs[it.n].c,it.x*T,it.y*T); });
+      this.items.slice().sort((a, b) => (a.y + a.h) - (b.y + b.h)).forEach(it => { x.drawImage(it.b || SP.objs[it.n].c, it.x * T, it.y * T); });
       this.canvas = c; return c;
     }
   }
