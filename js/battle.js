@@ -74,7 +74,7 @@
       ctx.restore();
     }
     function sprite(ctx, dog, S, x, y, sc, flip) {
-      if (!dog) return; const img = SP.battleDog(D.SPECIES[dog.sp]); ctx.save(); ctx.globalAlpha = S.a * (S.blink && Math.floor(performance.now() / 70) % 2 ? .25 : 1);
+      if (!dog) return; const img = dog.kind === 'demon' ? SP.battleDemon(D.SPECIES[dog.sp]) : SP.battleDog(D.SPECIES[dog.sp]); ctx.save(); ctx.globalAlpha = S.a * (S.blink && Math.floor(performance.now() / 70) % 2 ? .25 : 1);
       ctx.translate(x + S.ox, y + S.oy); ctx.scale((flip ? -1 : 1) * sc * S.sc, sc * S.sc); ctx.drawImage(img, -32, -64, 64, 64); ctx.restore();
     }
     function hud(ctx, d, S, x, y, mine) {
@@ -104,7 +104,7 @@
     // ---------- entradas ----------
     const sendFoe = async () => {
       B.dogF = B.foes[B.fi]; B.dogF.stage = { atk: 0, def: 0, spd: 0 }; B.fo.hp = B.dogF.hp; B.fo.a = 1; B.fo.oy = 0; B.fo.ox = 260; B.fo.sc = 1;
-      if (G.dex) G.dex.seen[B.dogF.sp] = 1; M.audio.sfx('bark'); await M.tween(B.fo, 'ox', 0, 380);
+      if (G.dex && B.dogF.kind !== 'demon') G.dex.seen[B.dogF.sp] = 1; M.audio.sfx(B.dogF.kind === 'demon' ? 'alert' : 'bark'); await M.tween(B.fo, 'ox', 0, 380);
     };
     const sendPlayer = async (d, first) => {
       B.dogP = d; d.stage = { atk: 0, def: 0, spd: 0 }; B.pl.hp = d.hp; B.pl.a = 1; B.pl.oy = 0; B.pl.sc = 1; B.pl.ox = -260; B.part.add(d.uid);
@@ -118,7 +118,7 @@
       await said(`${B.trainer.name} mandou ${B.foes[0].name}!`, 600); B.trainerShow = 0;
     }
     B.hideHud = false; await sendFoe();
-    if (!B.trainer) await said(`Um ${B.dogF.name} selvagem apareceu!`, 800);
+    if (!B.trainer) await said(B.dogF.kind === 'demon' ? `Um demônio zombeteiro, ${B.dogF.name}, apareceu!` : `Um ${B.dogF.name} selvagem apareceu!`, 800);
     await sendPlayer(start, true);
 
     // ---------- efeitos de dano / golpes ----------
@@ -189,7 +189,7 @@
     // ---------- faints ----------
     async function foeFainted() {
       M.audio.sfx('faint'); await Promise.all([M.tween(B.fo, 'oy', 40, 400), M.tween(B.fo, 'a', 0, 400)]);
-      await said(B.wild ? `${B.dogF.name} se rendeu e fugiu correndo!` : `${B.dogF.name} não aguenta mais!`, 800);
+      await said(B.dogF.kind === 'demon' ? `${B.dogF.name} foi expulso de Cumbica!` : B.wild ? `${B.dogF.name} se rendeu e fugiu correndo!` : `${B.dogF.name} não aguenta mais!`, 800);
       await awardXp(B.dogF); B.dogF.hp = 0;
       if (B.fi < B.foes.length - 1) { B.fi++; if (B.trainer) await said(`${B.trainer.name} mandou ${B.foes[B.fi].name}!`, 700); await sendFoe(); B.part = new Set([B.dogP.uid]); return 'next'; }
       return 'win';
@@ -234,7 +234,7 @@
           B.prompt = ''; const id = await UI.bag({ only: 'Cura', pick: true }); if (id) { const i = await UI.party({ pick: true, title: 'Usar em quem?' }); if (i >= 0) return { t: 'item', id, i }; }
         } else if (c === 3) {
           if (!B.wild) { B.prompt = ''; await M.say(null, 'Cachorro de treinador não aceita petisco de estranho! Vença a disputa.'); continue; }
-          if (o.noRecruit) { B.prompt = ''; await M.say(null, 'Esse cachorro não quer saber de você agora.'); continue; }
+          if (o.noRecruit || B.dogF.kind === 'demon') { B.prompt = ''; await M.say(null, B.dogF.kind === 'demon' ? 'Demônios não podem ser recrutados. Gabe precisa expulsá-los de Cumbica!' : 'Esse cachorro não quer saber de você agora.'); continue; }
           B.prompt = ''; const id = await UI.bag({ only: 'Recrutar', pick: true }); if (id) return { t: 'recruit', id };
         } else if (c === 4) return { t: 'flee' };
       }
