@@ -230,9 +230,14 @@
     const down = dir === 'down', up = dir === 'up', side = !down && !up;
     if (p.extra === 'apron') { R(x, '#f4f0e0', 5, 13, 6, 5); R(x, '#d8d4c4', 5, 17, 6, 1); R(x, '#b8b0a0', 7, 14, 2, 1); }
     if (p.extra === 'coleira') { R(x, '#c0212a', side ? 5 : 6, 12, side ? 3 : 4, 1); if (down) { R(x, '#e8e8e8', 5, 14, 1, 1); R(x, '#e8e8e8', 10, 14, 1, 1); } }
-    if (p.extra === 'wheelchair') { R(x, '#303744', 1, 19, 2, 4); R(x, '#303744', 13, 19, 2, 4); R(x, '#9098a8', 3, 18, 10, 1); R(x, '#707987', 4, 19, 8, 1); R(x, '#707987', 5, 20, 1, 2); R(x, '#707987', 10, 20, 1, 2); }
+    if (p.extra === 'johnny' || p.extra === 'wheelchair') { R(x, '#303744', 1, 19, 2, 4); R(x, '#303744', 13, 19, 2, 4); R(x, '#9098a8', 3, 18, 10, 1); R(x, '#707987', 4, 19, 8, 1); R(x, '#707987', 5, 20, 1, 2); R(x, '#707987', 10, 20, 1, 2); }
     if (p.extra === 'crawl') { R(x, pa, 2, 18, 12, 5); R(x, sh, 5, 17, 8, 4); R(x, sk, 1, 17, 4, 4); R(x, hr, 1, 16, 4, 2); R(x, sk, 5, 20, 2, 2); }
     if (p.shoulderCloth) { if (down) { R(x, p.shoulderCloth, 10, 11, 3, 3); R(x, M.shade(p.shoulderCloth, .78), 11, 13, 2, 3); } else if (side) { R(x, p.shoulderCloth, 9, 11, 3, 4); R(x, M.shade(p.shoulderCloth, .78), 10, 14, 2, 2); } else { R(x, p.shoulderCloth, 3, 11, 3, 4); R(x, M.shade(p.shoulderCloth, .78), 3, 14, 2, 2); } }
+    if (p.extra === 'johnny') {
+      if (down) { R(x, '#70bfe0', 3, 2, 10, 3); R(x, '#4d91bd', 3, 4, 2, 2); R(x, '#4d91bd', 11, 4, 2, 2); R(x, '#f3d36a', 6, 2, 1, 1); R(x, '#f3d36a', 9, 3, 1, 1); R(x, '#d9b34a', 6, 7, 4, 1); R(x, '#d9b34a', 6, 7, 1, 3); R(x, '#d9b34a', 9, 7, 1, 3); R(x, '#d9b34a', 7, 10, 2, 1); R(x, '#252b36', 5, 8, 2, 1); R(x, '#252b36', 9, 8, 2, 1); R(x, '#8b554b', 6, 11, 4, 1); R(x, '#70bfe0', 3, 12, 2, 3); R(x, '#70bfe0', 11, 12, 2, 3); }
+      else if (side) { R(x, '#70bfe0', 4, 2, 8, 3); R(x, '#4d91bd', 4, 4, 2, 2); R(x, '#e5c66f', 8, 2, 2, 1); R(x, '#d9b34a', 5, 7, 3, 1); R(x, '#252b36', 7, 8, 2, 1); R(x, '#70bfe0', 4, 12, 2, 4); R(x, '#70bfe0', 9, 12, 2, 4); }
+      else { R(x, '#70bfe0', 3, 2, 10, 3); R(x, '#4d91bd', 3, 4, 2, 2); R(x, '#4d91bd', 11, 4, 2, 2); R(x, '#e5c66f', 6, 2, 3, 1); R(x, '#70bfe0', 3, 12, 10, 4); }
+    }
     if (p.pattern === 'stars') { const star = '#f4d66a'; [[4,13],[10,14],[6,17],[11,19],[3,21]].forEach(([sx,sy]) => { R(x, star, sx, sy, 1, 1); R(x, '#fff2b0', sx, sy+1, 1, 1); }); }
     if (p.pattern === 'green-orbs') { [[4,14],[10,17],[6,20]].forEach(([sx,sy]) => { R(x, '#8acb70', sx, sy, 2, 2); R(x, '#d8f0a0', sx, sy, 1, 1); }); }
     if (p.emblem === 'horseshoe') { R(x, '#d9b34a', 6, 8, 4, 1); R(x, '#d9b34a', 6, 8, 1, 3); R(x, '#d9b34a', 9, 8, 1, 3); R(x, '#d9b34a', 7, 11, 2, 1); }
