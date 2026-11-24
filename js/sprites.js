@@ -592,4 +592,35 @@
     SP[name]=function(...args){const c=original.apply(this,args);if(c&&!detailCache.has(c)){texture(c,name==='person'?15:18,391);detailCache.add(c);}return c;};
   }
 
+
+  // Hand-authored Gabe pixel frames, independent of the generic NPC generator.
+  const gabeFrames=new Map();
+  const oldPerson=SP.person, oldPortrait=SP.portrait;
+  const palette={k:'#241b32',d:'#43344e',l:'#efb64c',h:'#ffe18a',s:'#ffd1aa',t:'#c98470',r:'#b72d49',v:'#ed5261',b:'#65536d',p:'#35304b',w:'#f5e6e0',e:'#456b9e'};
+  function pixels(ctx,rows,ox,oy){rows.forEach((row,y)=>[...row].forEach((ch,x)=>{if(palette[ch])R(ctx,palette[ch],ox+x,oy+y,1,1);}));}
+  const front=[
+    '.....kkkkkk.....','...kkddddddkk...','..kddddddddddk..','..kddwddwddddk..','..kddddwdddddkk.','..kkkkkkkkkkkkk.','..klhhhhhhhlk...','..klhssssshlk...','..klse s eslk...'.replaceAll(' ', 's'),'..klsksskslk....','..klsssssslk....','...klsttslk.....','....kkkkkk......','...krvvvvrrk....','..kbrvddvrrbk...','..kbrvddvrrbk...','..ksrvddvrrsk...','...krvddvrrk....','...krrrrrrrk....','....kpppppk.....','....kpkkppk.....','....kpkkppk.....','...kwwkkwwk.....','...kkkkkkkk.....'];
+  const side=[
+    '.....kkkkk......','...kkdddddk.....','..kddddddddk....','..kddddddddkk...','..kkkkkkkkkkkk..','..klhhhhlk......','.klhhsssssk.....','klhhssseesk.....','klhsssksssk.....','.klhsssssk......','..klstttk.......','...kkkkk........','..kbbrrrk.......','..kbbvrvvk......','..kbbvrvvk......','..kbbvrsk.......','...kbrssk.......','...krrrrk.......','....kpppk.......','....kpppk.......','....kppk........','...kwwpk........','...kkkkk........'];
+  const back=[
+    '.....kkkkkk.....','...kkddddddkk...','..kddddddddddk..','..kddddddddddk..','..kddddddddddk..','...kkkkkkkkkk...','...klhhhhhlk....','..klhhhhhhhlk...','..klhhllhhhlk...','..klhhllhhhlk...','...klhllhlk.....','....klllk.......','...krrrrrrk.....','..krkbbbbkrk....','..krkbbbbkrk....','..kskbbbbksk....','...rkbbbbkr.....','...krrrrrrk.....','....kppppk......','....kpkkpk......','....kpkkpk......','...kwwkkwwk.....','...kkkkkkkk.....'];
+  SP.person=function(p,dir,f){
+    if(p!==SP.GABE)return oldPerson(p,dir,f);
+    const key=dir+f;if(gabeFrames.has(key))return gabeFrames.get(key);
+    const [c,x]=mkc(16,32);if(dir==='left'){x.translate(16,0);x.scale(-1,1);}
+    const rows=dir==='up'?back:dir==='down'?front:side;
+    const body=rows.slice(0,-3),feet=rows.slice(-3);
+    pixels(x,body,0,32-rows.length-(f===2?1:0));
+    pixels(x,feet,f===1?1:0,29-(f===2?1:0));
+    gabeFrames.set(key,c);return c;
+  };
+  const portraitsDetail=new WeakSet();
+  SP.portrait=function(p,gabe){
+    const c=oldPortrait(p,gabe);if(!portraitsDetail.has(c)){
+      const x=c.getContext('2d');
+      if(gabe){R(x,'#30243f',6,1,20,8);R(x,'#493953',8,1,16,2);R(x,'#20192e',5,8,24,2);R(x,'#f5e6e0',14,3,1,3);R(x,'#f5e6e0',17,3,1,3);R(x,'#f5e6e0',14,6,4,1);R(x,'#b72d49',5,27,8,5);R(x,'#b72d49',21,27,6,5);}
+      texture(c,12,731);portraitsDetail.add(c);
+    }return c;
+  };
+
 })(window.MD);
