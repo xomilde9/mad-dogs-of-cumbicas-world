@@ -167,7 +167,7 @@
     const key = JSON.stringify(p) + dir + f; if (pcache.has(key)) return pcache.get(key);
     let [c, x] = mkc(16, 24);
     const sk = p.skin || '#f4c8a0', hr = p.hair || '#3a2a20', hrd = M.shade(hr, .78), hrl = M.shade(hr, 1.18);
-    const sh = p.shirt || '#4a6ab8', shd = M.shade(sh, .8), pa = p.pants || '#3a3a4a', pad = M.shade(pa, .82), so = p.shoes || '#f0f0f0';
+    const sh = p.shirtless ? sk : (p.shirt || '#4a6ab8'), shd = M.shade(sh, .8), pa = p.pants || '#3a3a4a', pad = M.shade(pa, .82), so = p.shoes || '#f0f0f0';
     const long = p.style === 'long' || p.style === 'bun', bald = p.style === 'bald', bun = p.style === 'bun';
     const aL = f === 1 ? 1 : f === 2 ? -1 : 0;
     const eye = '#241818';
@@ -188,7 +188,7 @@
       R(x, eye, 5, 7, 1, 2); R(x, '#c06a6a', 4, 10, 2, 1); if (p.blush) R(x, '#e8a0a0', 6, 9, 1, 1);
       if (p.extra === 'beard') R(x, p.beard || '#ccc', 4, 9, 6, 3);
       if (p.extra === 'glasses') { R(x, '#222', 3, 6, 4, 1); R(x, '#222', 4, 6, 1, 3); }
-      if (p.extra === 'sunglasses') { R(x, '#171b25', 3, 6, 8, 4); R(x, '#34465c', 4, 7, 3, 2); R(x, '#34465c', 8, 7, 2, 2); R(x, '#10131b', 7, 7, 1, 2); }
+      if (p.extra === 'sunglasses') { R(x, '#171b25', 3, 6, 8, 4); R(x, '#e34b32', 4, 7, 2, 2); R(x, '#e9a52c', 6, 7, 2, 2); R(x, '#55b9a8', 8, 7, 2, 2); R(x, '#3977c5', 9, 7, 1, 2); R(x, '#fff0c8', 7, 6, 1, 1); }
       // Braço visível acompanha a passada no perfil; a mão alterna um pixel.
       R(x, sh, 7, 12 + aL, 2, 3);
       R(x, shd, 7, 14 + aL, 2, 1);
@@ -215,7 +215,7 @@
         R(x, eye, 6, 7, 1, 2); R(x, eye, 9, 7, 1, 2); R(x, '#c06a6a', 7, 10, 2, 1); if (p.blush) { R(x, '#eba5a5', 5, 9, 1, 1); R(x, '#eba5a5', 10, 9, 1, 1); }
         if (p.extra === 'beard') { R(x, p.beard || '#ccc', 4, 9, 8, 3); R(x, '#c06a6a', 7, 10, 2, 1); }
         if (p.extra === 'glasses') { R(x, '#222', 5, 7, 3, 1); R(x, '#222', 8, 7, 3, 1); R(x, '#222', 5, 6, 1, 3); R(x, '#222', 10, 6, 1, 3); }
-        if (p.extra === 'sunglasses') { R(x, '#171b25', 3, 6, 10, 4); R(x, '#34465c', 4, 7, 3, 2); R(x, '#34465c', 9, 7, 3, 2); R(x, '#10131b', 7, 7, 2, 2); R(x, '#080a10', 2, 7, 2, 1); R(x, '#080a10', 12, 7, 2, 1); }
+        if (p.extra === 'sunglasses') { R(x, '#171b25', 3, 6, 10, 4); R(x, '#e34b32', 4, 7, 2, 2); R(x, '#e9a52c', 6, 7, 2, 2); R(x, '#55b9a8', 8, 7, 2, 2); R(x, '#3977c5', 10, 7, 2, 2); R(x, '#fff0c8', 7, 6, 1, 1); R(x, '#080a10', 2, 7, 2, 1); R(x, '#080a10', 12, 7, 2, 1); }
         if (long) { R(x, hr, 3, 12, 2, 4); R(x, hr, 11, 12, 2, 4); R(x, hrd, 3, 15, 2, 1); R(x, hrd, 11, 15, 2, 1); }
       } else {
         R(x, hr, 3, 2, 10, 10); R(x, hrl, 5, 3, 4, 1); R(x, hrd, 4, 10, 8, 2); R(x, sk, 6, 12, 4, 1);
@@ -232,6 +232,7 @@
     if (p.extra === 'coleira') { R(x, '#c0212a', side ? 5 : 6, 12, side ? 3 : 4, 1); if (down) { R(x, '#e8e8e8', 5, 14, 1, 1); R(x, '#e8e8e8', 10, 14, 1, 1); } }
     if (p.extra === 'wheelchair') { R(x, '#303744', 1, 19, 2, 4); R(x, '#303744', 13, 19, 2, 4); R(x, '#9098a8', 3, 18, 10, 1); R(x, '#707987', 4, 19, 8, 1); R(x, '#707987', 5, 20, 1, 2); R(x, '#707987', 10, 20, 1, 2); }
     if (p.extra === 'crawl') { R(x, pa, 2, 18, 12, 5); R(x, sh, 5, 17, 8, 4); R(x, sk, 1, 17, 4, 4); R(x, hr, 1, 16, 4, 2); R(x, sk, 5, 20, 2, 2); }
+    if (p.shoulderCloth) { if (down) { R(x, p.shoulderCloth, 10, 11, 3, 3); R(x, M.shade(p.shoulderCloth, .78), 11, 13, 2, 3); } else if (side) { R(x, p.shoulderCloth, 9, 11, 3, 4); R(x, M.shade(p.shoulderCloth, .78), 10, 14, 2, 2); } else { R(x, p.shoulderCloth, 3, 11, 3, 4); R(x, M.shade(p.shoulderCloth, .78), 3, 14, 2, 2); } }
     if (p.pattern === 'stars') { const star = '#f4d66a'; [[4,13],[10,14],[6,17],[11,19],[3,21]].forEach(([sx,sy]) => { R(x, star, sx, sy, 1, 1); R(x, '#fff2b0', sx, sy+1, 1, 1); }); }
     if (p.pattern === 'green-orbs') { [[4,14],[10,17],[6,20]].forEach(([sx,sy]) => { R(x, '#8acb70', sx, sy, 2, 2); R(x, '#d8f0a0', sx, sy, 1, 1); }); }
     if (p.emblem === 'horseshoe') { R(x, '#d9b34a', 6, 8, 4, 1); R(x, '#d9b34a', 6, 8, 1, 3); R(x, '#d9b34a', 9, 8, 1, 3); R(x, '#d9b34a', 7, 11, 2, 1); }
