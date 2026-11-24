@@ -16,7 +16,7 @@
     M.audio.stop();
     if (mode === 'new') {
       M.newGame(); M.audio.play('story'); await UI.card(INTRO); Wd.build(); Wd.enter('cumbica', 38, 36, 'down');
-      await M.fadeIn(400);
+      await M.fadeIn(400); await UI.card(['TUTORIAL — MOVIMENTAÇÃO: Use WASD ou as setas para caminhar. Explore ruas, praças e vielas de Cumbica.', 'TUTORIAL — INTERAÇÃO: Aperte Z, Enter ou Espaço para conversar com pessoas, ler placas e examinar objetos. Fique de frente para o que deseja investigar.', 'TUTORIAL — MAPA E MISSÕES: Aperte M para abrir o mapa e Q para consultar o diário. O mapa mostra lojas, NPCs, ginásios e pontos de interesse. O diário explica seu próximo destino.', 'TUTORIAL — SUA MATILHA: Os cachorros são seus parceiros. Recrute com petiscos e confiança, cuide do HP e escolha a equipe antes das batalhas. Os demônios zombeteiros são os inimigos. Boa caçada, Gabe!'], { bg: '#17233a' }); M.G.flags.tutorialSeen = 1; M.Save.save();
     } else { if (!M.Save.load()) { M.newGame(); } Wd.build(); const G = M.G; M.fx.fade = 1; Wd.enter(G.map, G.x, G.y, G.dir); await M.fadeIn(400); }
     // auto-eventos iniciais (Zé)
     Wd.run(async () => { await M.wait(300); const ze = (Wd.npcs.cumbica || []).find(n => n.id === 'ze'); if (ze && !M.G.flags.starter && Wd.mapId === 'cumbica') { M.G.flags.auto_ze = 1; await M.story.handlers['@ze_intro'](ze); } });
