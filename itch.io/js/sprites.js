@@ -362,6 +362,40 @@
     battleDogCache.set(sp.id, frame);
     return frame;
   };
+  // Demônio zombeteiro: sprite de batalha 64x64 inspirado na referência enviada.
+  const battleDemonCache = new Map();
+  SP.battleDemon = function (sp) {
+    const key = sp.id || 'risonho';
+    if (battleDemonCache.has(key)) return battleDemonCache.get(key);
+    const [frame, x] = mkc(64, 64);
+    const px = (col, a, b, w, h) => R(x, col, a, b, w, h);
+    // Cauda arqueada para a direita.
+    px('#17131d', 50, 22, 5, 4); px('#17131d', 53, 18, 5, 5); px('#17131d', 55, 14, 5, 5); px('#17131d', 52, 10, 5, 5);
+    px('#c9363c', 52, 23, 3, 3); px('#ed6254', 55, 18, 3, 4); px('#ed6254', 56, 14, 3, 3);
+    // Pernas e corpo.
+    px('#17131d', 17, 43, 31, 17); px('#a90f31', 20, 43, 25, 14); px('#d52b43', 22, 40, 21, 16);
+    px('#17131d', 16, 53, 13, 8); px('#17131d', 37, 53, 13, 8); px('#d52b43', 19, 51, 10, 7); px('#d52b43', 38, 51, 9, 7);
+    px('#f4e8e8', 20, 57, 3, 3); px('#f4e8e8', 26, 57, 3, 3); px('#f4e8e8', 39, 57, 3, 3); px('#f4e8e8', 45, 57, 3, 3);
+    // Braços abertos, com mãos de garra.
+    px('#17131d', 10, 31, 12, 18); px('#a90f31', 12, 33, 9, 13); px('#d52b43', 9, 36, 7, 10);
+    px('#17131d', 43, 31, 12, 18); px('#a90f31', 44, 33, 9, 13); px('#d52b43', 49, 36, 7, 10);
+    px('#17131d', 7, 44, 9, 5); px('#e34a4e', 8, 43, 7, 4); px('#17131d', 50, 44, 9, 5); px('#e34a4e', 51, 43, 7, 4);
+    // Cabeça e chifres roxos.
+    px('#17131d', 13, 13, 39, 31); px('#b41436', 16, 17, 33, 25); px('#e23b46', 19, 16, 27, 21);
+    px('#17131d', 10, 9, 13, 24); px('#725078', 13, 8, 9, 22); px('#9873a0', 15, 10, 5, 15);
+    px('#17131d', 40, 9, 13, 24); px('#725078', 42, 8, 9, 22); px('#9873a0', 44, 10, 5, 15);
+    px('#17131d', 16, 4, 8, 8); px('#725078', 18, 3, 6, 8); px('#17131d', 40, 4, 8, 8); px('#725078', 41, 3, 6, 8);
+    // Olhos amarelos e sorriso azul cheio de dentes.
+    px('#17131d', 17, 24, 13, 8); px('#f8cf35', 19, 25, 10, 5); px('#17131d', 34, 24, 13, 8); px('#f8cf35', 36, 25, 10, 5);
+    px('#17131d', 23, 25, 3, 5); px('#17131d', 39, 25, 3, 5);
+    px('#17131d', 17, 33, 31, 12); px('#174c70', 20, 34, 25, 7); px('#2386a5', 22, 34, 20, 3);
+    for (let i = 0; i < 5; i++) px('#f4f1df', 22 + i * 4, 38, 2, 3);
+    // Barriga marcada e brilho.
+    px('#79142f', 27, 46, 12, 2); px('#79142f', 29, 50, 8, 2); px('#79142f', 27, 54, 12, 2);
+    px('#ff8a69', 22, 18, 5, 2); px('#ff8a69', 14, 38, 2, 5);
+    outline(frame, '#17131d');
+    battleDemonCache.set(key, frame); return frame;
+  };
   const battlePortraitCache = new WeakMap();
   SP.battlePortrait = function (portrait) {
     if (!portrait) return null;
