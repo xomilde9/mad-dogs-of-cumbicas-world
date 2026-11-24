@@ -75,7 +75,7 @@
     const it = D.ITEMS[id], mx = D.stats(dog).hp;
     if (it.revive) { if (dog.hp > 0) return null; dog.hp = Math.max(1, Math.floor(mx * it.revive)); dog.st = null; return `${dog.name} voltou a abanar o rabo!`; }
     if (dog.hp <= 0 || dog.hp >= mx) return null;
-    const before = dog.hp; dog.hp = Math.min(mx, dog.hp + it.heal); if (it.buff === 'atk') dog.nextBattleAtk = 1; return `${dog.name} recuperou ${dog.hp - before} de HP.${it.buff === 'atk' ? ' A lasanha deu energia extra: ATQ +1 na próxima batalha!' : ''}`;
+    const before = dog.hp; dog.hp = Math.min(mx, dog.hp + it.heal); if (it.buff === 'atk') dog.nextBattleAtk = 1; if (it.buff === 'spd') dog.nextBattleSpd = 1; return `${dog.name} recuperou ${dog.hp - before} de HP.${it.buff === 'atk' ? ' ATQ +1 na próxima batalha!' : it.buff === 'spd' ? ' VELOCIDADE +1 na próxima batalha!' : ''}`;
   };
   M.addItem = (id, n = 1) => { const b = M.G.bag; b[id] = (b[id] || 0) + n; };
   M.hasItem = (id) => (M.G.bag[id] || 0) > 0;
