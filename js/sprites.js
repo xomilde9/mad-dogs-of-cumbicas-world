@@ -351,4 +351,29 @@
     if (dir === 'right') { const [c2, x2] = mkc(16, 16); x2.translate(16, 0); x2.scale(-1, 1); x2.drawImage(c, 0, 0); dcache.set(key, c2); return c2; }
     dcache.set(key, c); return c;
   };
+  // ---------------- ESCALA DE SPRITES: proporção RPG portátil ----------------
+  // Mantém a arte procedural original, mas amplia por vizinho mais próximo:
+  // personagens passam a ocupar 24x32 px e cães 24x24 px, com pixels nítidos.
+  const pixelArtCache = new WeakMap();
+  function pixelArtSize(source, width, height) {
+    if (!source) return source;
+    let sizes = pixelArtCache.get(source);
+    if (!sizes) { sizes = {}; pixelArtCache.set(source, sizes); }
+    const key = width + 'x' + height;
+    if (sizes[key]) return sizes[key];
+    const [scaled, sx] = mkc(width, height);
+    sx.imageSmoothingEnabled = false;
+    sx.clearRect(0, 0, width, height);
+    sx.drawImage(source, 0, 0, width, height);
+    sizes[key] = scaled;
+    return scaled;
+  }
+  const personBase = SP.person;
+  SP.person = function (p, dir, frame) {
+    return pixelArtSize(personBase(p, dir, frame), 24, 32);
+  };
+  const dogSmallBase = SP.dogSmall;
+  SP.dogSmall = function (sp, dir, frame) {
+    return pixelArtSize(dogSmallBase(sp, dir, frame), 24, 24);
+  };
 })(window.MD);
