@@ -13,9 +13,9 @@
   const chip = (ctx, t, x, y) => { const w = M.tw(D.TNAME[t], 10) + 8; M.rr(ctx, x, y, w, 13, D.TCOL[t]); M.text(ctx, D.TNAME[t], x + 4, y + 1, '#fff', 10); return w; };
   M.typeChip = chip;
   const tri = (ctx, x, y, col = '#d03030') => { ctx.fillStyle = col; for (let i = 0; i < 5; i++) ctx.fillRect(x + i, y + i, 1, 9 - i * 2); };
-  const bg = (ctx, c1 = '#2a3e62', c2 = '#223250') => { ctx.fillStyle = c1; ctx.fillRect(0, 0, W, H); ctx.fillStyle = c2; for (let y = 0; y < H; y += 16) for (let x = (y / 16 % 2) * 16; x < W; x += 32) ctx.fillRect(x, y, 16, 16); };
-  const head = (ctx, t) => { M.rr(ctx, 0, 0, W, 26, '#111c30'); M.text(ctx, t, 12, 4, '#fff1a8', 17, '#080d18'); };
-  const foot = (ctx, t) => { M.rr(ctx, 0, H - 22, W, 22, '#111c30'); M.text(ctx, t, 10, H - 19, '#ffffff', 13, '#080d18'); };
+  const bg = (ctx, c1 = '#453465', c2 = '#3b2c58') => { ctx.fillStyle = c1; ctx.fillRect(0, 0, W, H); ctx.fillStyle = c2; for (let y = 0; y < H; y += 16) for (let x = (y / 16 % 2) * 16; x < W; x += 32) ctx.fillRect(x, y, 16, 16); };
+  const head = (ctx, t) => { M.rr(ctx, 0, 0, W, 26, '#281d43'); M.text(ctx, t, 12, 4, '#fff1a8', 17, '#080d18'); };
+  const foot = (ctx, t) => { M.rr(ctx, 0, H - 22, W, 22, '#281d43'); M.text(ctx, t, 10, H - 19, '#ffffff', 13, '#080d18'); };
 
   // ---------- diálogo ----------
   M.who = (n) => {
@@ -34,11 +34,11 @@
       key(a) { if (this.fin) return; if (a === 'ok' || a === 'back') this.adv(); },
       draw(ctx) {
         if (info && info.por) { M.rr(ctx, 10, 148, 72, 72, '#e8c660'); ctx.drawImage(info.por, 0, 0, 32, 32, 13, 151, 66, 66); }
-        if (info && info.name) { const w = M.tw(info.name, 14) + 20; M.rr(ctx, info.por ? 86 : 10, 198, w, 22, '#e8c660'); M.rr(ctx, (info.por ? 86 : 10) + 2, 200, w - 4, 18, '#27445a'); M.text(ctx, info.name, (info.por ? 86 : 10) + 10, 201, '#fff', 14); }
-        M.panel(ctx, 6, 222, 468, 94, 'dark');
+        if (info && info.name) { const w = M.tw(info.name, 14) + 20; M.rr(ctx, info.por ? 86 : 10, 198, w, 22, '#e8c660'); M.rr(ctx, (info.por ? 86 : 10) + 2, 200, w - 4, 18, '#58418e'); M.text(ctx, info.name, (info.por ? 86 : 10) + 10, 201, '#fff', 14); }
+        M.panel(ctx, 6, 222, 468, 94, 'light');
         let left = Math.floor(shown);
-        pages[pi].forEach((l, i) => { const t = l.slice(0, Math.max(0, left)); left -= l.length; M.text(ctx, t, 24, 236 + i * 25, '#fff', 15, '#0c1824'); });
-        if (!this.fin && shown >= pages[pi].join('').length && Math.floor(performance.now() / 350) % 2) { ctx.fillStyle = '#e8c660'; for (let i = 0; i < 5; i++) ctx.fillRect(448 + i, 292 + i, 9 - i * 2, 1); }
+        pages[pi].forEach((l, i) => { const t = l.slice(0, Math.max(0, left)); left -= l.length; M.text(ctx, t, 24, 236 + i * 25, '#30233e', 15); });
+        if (!this.fin && shown >= pages[pi].join('').length && Math.floor(performance.now() / 350) % 2) { ctx.fillStyle = '#65458b'; for (let i = 0; i < 5; i++) ctx.fillRect(448 + i, 292 + i, 9 - i * 2, 1); }
       },
     };
     dlg = ov; M.openOv(ov);
