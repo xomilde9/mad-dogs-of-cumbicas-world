@@ -177,6 +177,10 @@
       const legs = f === 0 ? [{ x: 6, w: 4, e: 23 }] : f === 1 ? [{ x: 8, w: 3, e: 22, d: 1 }, { x: 5, w: 3, e: 23 }] : [{ x: 5, w: 3, e: 22, d: 1 }, { x: 8, w: 3, e: 23 }];
       legs.forEach(l => { R(x, l.d ? pad : pa, l.x, 18, l.w, l.e - 19); R(x, so, l.x - (dir ? 0 : 0), l.e - 1, l.w + 1, 2); });
       R(x, sh, 5, 12, 6, 6); R(x, shd, 5, 17, 6, 1);
+      // Acabamento lateral: gola, costura da manga e barra da camiseta.
+      R(x, M.shade(sh, 1.16), 6, 12, 3, 1); R(x, shd, 5, 16, 6, 1);
+      R(x, M.shade(sh, 1.08), 6, 18, 4, 1);
+      R(x, pad, 6, 21, 4, 1); R(x, M.shade(so, 1.12), 6, 22, 2, 1);
       R(x, sk, 4, 3, 7, 9); R(x, sk, 3, 8, 1, 2);
       R(x, hr, 4, 2, 8, 2); R(x, hr, 7, 3, 5, 9 + (long ? 5 : 0)); R(x, hr, 4, 3, 3, 2);
       if (bald) { R(x, sk, 4, 2, 8, 2); R(x, hr, 8, 5, 3, 3); }
@@ -195,6 +199,9 @@
       if (long) R(x, hrd, 3, 4, 10, 14);
       R(x, pa, 5, 18, 3, le - 19); R(x, so, 5, le - 1, 3, 2); R(x, pa, 8, 18, 3, re - 19); R(x, so, 8, re - 1, 3, 2);
       R(x, sh, 4, 12, 8, 6); R(x, shd, 4, 17, 8, 1);
+      // Gola, costuras e pequenos detalhes separam camiseta e calça em baixa resolução.
+      R(x, M.shade(sh, 1.18), 6, 12, 4, 1); R(x, shd, 7, 13, 2, 1);
+      R(x, M.shade(sh, 1.08), 5, 16, 1, 1); R(x, M.shade(sh, 1.08), 10, 16, 1, 1);
       // Costura central e luz no ombro dão leitura ao tronco em escala 16x32.
       R(x, M.shade(sh, 1.12), 5, 13, 2, 1); R(x, shd, 7, 15, 2, 1);
       arms(3, 12);
@@ -210,6 +217,8 @@
         if (long) { R(x, hr, 3, 12, 2, 4); R(x, hr, 11, 12, 2, 4); R(x, hrd, 3, 15, 2, 1); R(x, hrd, 11, 15, 2, 1); }
       } else {
         R(x, hr, 3, 2, 10, 10); R(x, hrl, 5, 3, 4, 1); R(x, hrd, 4, 10, 8, 2); R(x, sk, 6, 12, 4, 1);
+        R(x, M.shade(sh, 1.12), 6, 12, 4, 1); R(x, shd, 4, 16, 8, 1);
+        R(x, pad, 5, 20, 1, 2); R(x, pad, 10, 20, 1, 2);
         if (bald) { R(x, sk, 4, 3, 8, 7); R(x, hr, 4, 8, 8, 3); }
         if (long) { R(x, hr, 3, 12, 10, 5); R(x, hrd, 3, 16, 10, 1); R(x, hrl, 6, 12, 2, 4); }
       }
@@ -217,7 +226,7 @@
     }
     // extras comuns
     const down = dir === 'down', up = dir === 'up', side = !down && !up;
-    if (p.extra === 'apron') { R(x, '#f4f0e0', side ? 5 : 5, 13, 6, 5); R(x, '#d8d4c4', 5, 17, 6, 1); }
+    if (p.extra === 'apron') { R(x, '#f4f0e0', 5, 13, 6, 5); R(x, '#d8d4c4', 5, 17, 6, 1); R(x, '#b8b0a0', 7, 14, 2, 1); }
     if (p.extra === 'coleira') { R(x, '#c0212a', side ? 5 : 6, 12, side ? 3 : 4, 1); if (down) { R(x, '#e8e8e8', 5, 14, 1, 1); R(x, '#e8e8e8', 10, 14, 1, 1); } }
     if (p.cap) {
       const cc = p.cap, cd = M.shade(cc, .75);
