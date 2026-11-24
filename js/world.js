@@ -9,17 +9,73 @@
   const STEP_MS = 125;
   const Wd = M.world = { busy: false, npcs: {}, banner: null, p: null, lastZone: null, since: 0, bump: 0, cam: [0, 0] };
 
-  // ---------- save ----------
-  const KEY = 'mdcw_save_v1';
+  // ---------- save persistente e compatível entre versões ----------
+  const KEY = 'mdcw_save_v1'; // Não alterar: mantém os saves já existentes no navegador.
+  const SAVE_FORMAT = 2;
+  const freshGame = () => ({
+    v: 1, saveFormat: SAVE_FORMAT, map: 'cumbica', x: 38, y: 36, dir: 'down',
+    party: [], kennel: [], bag: { petisco: 5, agua: 3 }, money: 200,
+    flags: { badges: 0 }, visited: {}, time: 0, dex: { seen: {}, own: {} }, steps: 0
+  });
+  const mergeDefaults = (defaults, saved) => {
+    if (Array.isArray(defaults)) return Array.isArray(saved) ? saved : defaults;
+    if (defaults && typeof defaults === 'object') {
+      const out = Object.assign({}, defaults);
+      if (saved && typeof saved === 'object' && !Array.isArray(saved)) {
+        for (const k of Object.keys(saved)) out[k] = k in defaults ? mergeDefaults(defaults[k], saved[k]) : saved[k];
+      }
+      return out;
+    }
+    return saved === undefined || saved === null ? defaults : saved;
+  };
   M.Save = {
     has() { try { return !!localStorage.getItem(KEY); } catch (e) { return false; } },
-    save() { try { const G = M.G; G.map = Wd.p ? Wd.mapId : G.map; if (Wd.p) { G.x = Wd.p.x; G.y = Wd.p.y; G.dir = Wd.p.dir; } localStorage.setItem(KEY, JSON.stringify(G)); return true; } catch (e) { return false; } },
-    load() { try { const s = localStorage.getItem(KEY); if (!s) return false; M.G = JSON.parse(s); return true; } catch (e) { return false; } },
+    save() {
+      try {
+        if (!M.G) return false;
+        const G = M.G;
+        if (Wd.p) { G.map = Wd.mapId; G.x = Wd.p.x; G.y = Wd.p.y; G.dir = Wd.p.dir; }
+        G.saveFormat = SAVE_FORMAT;
+        localStorage.setItem(KEY, JSON.stringify(G));
+        return true;
+      } catch (e) { console.warn('Não foi possível salvar o progresso:', e); return false; }
+    },
+    load() {
+      try {
+        const raw = localStorage.getItem(KEY); if (!raw) return false;
+        const parsed = JSON.parse(raw);
+        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) return false;
+        const G = mergeDefaults(freshGame(), parsed);
+        if (!Array.isArray(G.party)) G.party = [];
+        if (!Array.isArray(G.kennel)) G.kennel = [];
+        if (!G.bag || typeof G.bag !== 'object') G.bag = {};
+        if (!G.flags || typeof G.flags !== 'object') G.flags = { badges: 0 };
+        if (!G.visited || typeof G.visited !== 'object') G.visited = {};
+        if (!G.dex || typeof G.dex !== 'object') G.dex = { seen: {}, own: {} };
+        if (!M.maps[G.map]) G.map = 'cumbica';
+        G.x = Number.isFinite(Number(G.x)) ? Number(G.x) : 38;
+        G.y = Number.isFinite(Number(G.y)) ? Number(G.y) : 36;
+        if (!['up', 'down', 'left', 'right'].includes(G.dir)) G.dir = 'down';
+        G.saveFormat = SAVE_FORMAT;
+        M.G = G;
+        // Regrava no formato atual após completar campos ausentes de saves antigos.
+        this.save();
+        return true;
+      } catch (e) { console.warn('Save antigo inválido; mantendo opção de iniciar novo jogo.', e); return false; }
+    },
     clear() { try { localStorage.removeItem(KEY); } catch (e) { } },
+    export() {
+      try {
+        if (!this.save()) return false;
+        const blob = new Blob([JSON.stringify({ game: "Mad Dogs of Cumbica's World", format: SAVE_FORMAT, data: M.G }, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob), a = document.createElement('a');
+        a.href = url; a.download = 'mad-dogs-cumbica-save.json'; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return true;
+      } catch (e) { console.warn('Não foi possível exportar o save:', e); return false; }
+    }
   };
-  M.newGame = () => {
-    M.G = { v: 1, map: 'cumbica', x: 38, y: 36, dir: 'down', party: [], kennel: [], bag: { petisco: 5, agua: 3 }, money: 200, flags: { badges: 0 }, visited: {}, time: 0, dex: { seen: {}, own: {} }, steps: 0 };
-  };
+  M.newGame = () => { M.G = freshGame(); };
 
   // ---------- NPCs ----------
   Wd.build = () => {
@@ -145,9 +201,12 @@
     if (s) { if (typeof s === 'object' && s.msg && Wd.bump <= 0) { Wd.bump = 1500; Wd.run(() => M.say(null, s.msg)); } else if (Wd.bump <= 0 && !s.msg) { Wd.bump = 250; M.audio.sfx('bump'); } return; }
     p.prev = [p.x, p.y]; p.mv = { fx: p.x, fy: p.y, tx, ty, t: 0 }; p.x = tx; p.y = ty;
   };
-  Wd.run = async (fn) => { if (Wd.busy) return; Wd.busy = true; try { await fn(); } catch (e) { console.error(e); } finally { Wd.busy = false; } };
+  Wd.run = async (fn) => { if (Wd.busy) return; Wd.busy = true; try { await fn(); } catch (e) { console.error(e); } finally { Wd.busy = false; if (M.G && M.Save) M.Save.save(); } };
 
   // ---------- cena ----------
+  let autosaveClock = 0;
+  window.addEventListener('pagehide', () => { if (M.G && M.Save) M.Save.save(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && M.G && M.Save) M.Save.save(); });
   Wd.scene = {
     key(a) {
       if (Wd.busy) return;
@@ -159,7 +218,7 @@
       else if (a === 'track') Wd.run(UI.trackMission);
     },
     update(dt, hasOv) {
-      const G = M.G; if (!G || !Wd.p) return; G.time += dt; if (Wd.banner) { Wd.banner.t += dt; if (Wd.banner.t > 2600) Wd.banner = null; } Wd.bump -= dt;
+      const G = M.G; if (!G || !Wd.p) return; G.time += dt; autosaveClock += dt; if (autosaveClock >= 8000) { autosaveClock = 0; M.Save.save(); } if (Wd.banner) { Wd.banner.t += dt; if (Wd.banner.t > 2600) Wd.banner = null; } Wd.bump -= dt;
       const p = Wd.p;
       // jogador
       if (p.mv) { p.mv.t += dt; p.fr = Math.floor(p.mv.t / (STEP_MS / 2)) % 2 + 1; if (p.mv.t >= STEP_MS) { const prev = p.prev; p.mv = null; p.fr = 0; p.px = p.x; p.py = p.y; Wd.run(async () => { await onStep(prev); }); if (!Wd.busy) { } } }
