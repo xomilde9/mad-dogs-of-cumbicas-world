@@ -1,0 +1,27 @@
+MAD DOGS OF CUMBICA'S WORLD — PACOTE HTML5 PARA ITCH.IO
+
+Esta pasta foi preparada para publicação como jogo HTML5 no itch.io.
+
+COMO PUBLICAR
+1. Baixe esta pasta (itch.io) ou copie seu conteúdo para uma pasta local.
+2. Comprima o CONTEÚDO desta pasta em um arquivo .zip.
+3. Confira se index.html está na raiz do ZIP (não dentro de uma segunda pasta).
+4. No itch.io, crie/edite o projeto e selecione "HTML".
+5. Envie o ZIP e marque "This file will be played in the browser".
+6. Salve e teste a página do jogo.
+
+CONTROLES
+WASD / Setas: mover
+Z / Enter / Espaço: confirmar e interagir
+X / Esc: voltar / menu
+I: mochila
+M: mapa
+Q: missões
+Tab: menu principal
+
+NOTAS
+- O jogo usa HTML5 Canvas e JavaScript puro, sem dependências externas.
+- Os arquivos JS e CSS foram mantidos com os caminhos relativos usados pelo index.html.
+- O progresso usa localStorage do navegador.
+- Esta é uma cópia de publicação; a versão principal permanece na raiz do repositório.
+- Faça um teste completo no navegador antes de divulgar a página.
