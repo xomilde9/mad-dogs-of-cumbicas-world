@@ -407,14 +407,56 @@
     return c;
   };
   const dogSmallBase = SP.dogSmall;
+  function dogFrontBack(sp, dir, frame) {
+    const L = sp.look, [c, x] = mkc(16, 24);
+    const body = L.c, belly = L.c2 || M.shade(body, 1.2), dark = M.shade(body, .72);
+    const head = L.hc || body, ear = L.ec || dark, muzzle = L.snc || belly;
+    const step = frame === 1 ? 1 : frame === 2 ? -1 : 0;
+    // Corpo visto de frente ou por trás, mantendo a silhueta compacta de GBA.
+    R(x, dark, 5, 13, 6, 7);
+    R(x, body, 4, 11, 8, 8);
+    R(x, belly, 6, 14, 4, 4);
+    R(x, dark, 5, 18 + step, 2, 4 - Math.max(0, step));
+    R(x, dark, 9, 18 - step, 2, 4 - Math.max(0, -step));
+    R(x, body, 4, 20 + step, 3, 2);
+    R(x, body, 9, 20 - step, 3, 2);
+    if (dir === 'up') {
+      R(x, ear, 3, 5, 3, 5); R(x, ear, 10, 5, 3, 5);
+      R(x, head, 4, 4, 8, 8);
+      R(x, dark, 6, 7, 4, 2);
+      if (L.tail === 'curl') { R(x, body, 7, 1, 3, 3); R(x, dark, 8, 2, 1, 1); }
+      else if (L.tail === 'fluff') R(x, belly, 6, 1, 4, 3);
+      else R(x, body, 7, 1, 2, 4);
+    } else {
+      if (L.ear === 'flop' || L.ear === 'round') {
+        R(x, ear, 2, 5, 3, 5); R(x, ear, 11, 5, 3, 5);
+      } else {
+        R(x, ear, 3, 2, 3, 6); R(x, ear, 10, 2, 3, 6);
+        R(x, M.shade(ear, .72), 4, 3, 1, 3); R(x, M.shade(ear, .72), 11, 3, 1, 3);
+      }
+      R(x, head, 4, 4, 8, 8);
+      R(x, muzzle, 5, 8, 6, 3);
+      R(x, '#17131a', 7, 8, 2, 2);
+      R(x, '#17131a', 5, 6, 1, 1); R(x, '#17131a', 10, 6, 1, 1);
+      if (L.tongue) R(x, '#e86a7a', 7, 11, 2, 2);
+      if (L.patch === 'mask') { R(x, belly, 5, 5, 6, 3); R(x, head, 7, 5, 2, 2); }
+    }
+    if (L.patch === 'spots') { R(x, L.pc, 5, 15, 2, 2); R(x, L.pc, 9, 16, 2, 2); }
+    if (L.patch === 'saddle') R(x, L.pc, 5, 12, 6, 3);
+    R(x, L.col || '#d8403c', 5, 12, 6, 1);
+    R(x, '#f4d040', 7, 12, 2, 1);
+    outline(c, M.shade(body, .28));
+    return c;
+  }
   SP.dogSmall = function (sp, dir, frame) {
     const key = 'ow-dog-' + sp.id + '-' + dir + '-' + frame;
     if (owCache.has(key)) return owCache.get(key);
     const [c, x] = mkc(16, 32);
     x.imageSmoothingEnabled = false;
     x.clearRect(0, 0, 16, 32);
-    // Os cães usam canvas alto de 2 tiles; a silhueta fica apoiada no chão.
-    x.drawImage(dogSmallBase(sp, dir, frame), 0, 8, 16, 24);
+    // Frente/costas possuem desenho próprio; laterais preservam o perfil de cada espécie.
+    if (dir === 'down' || dir === 'up') x.drawImage(dogFrontBack(sp, dir, frame), 0, 8);
+    else x.drawImage(dogSmallBase(sp, dir, frame), 0, 8);
     owCache.set(key, c);
     return c;
   };
