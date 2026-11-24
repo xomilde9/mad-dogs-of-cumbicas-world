@@ -156,6 +156,7 @@
       else if (a === 'bag') Wd.run(() => UI.bag());
       else if (a === 'map') Wd.run(UI.map);
       else if (a === 'quest') Wd.run(UI.quests);
+      else if (a === 'track') Wd.run(UI.trackMission);
     },
     update(dt, hasOv) {
       const G = M.G; if (!G || !Wd.p) return; G.time += dt; if (Wd.banner) { Wd.banner.t += dt; if (Wd.banner.t > 2600) Wd.banner = null; } Wd.bump -= dt;
@@ -190,7 +191,9 @@
       }
       ctx.restore();
       for (const n of npcsHere()) if (n.excl > 0) { const [x, y] = lerp(n); M.text(ctx, '!', Math.round((x * T - cx) * 2) + 12, Math.round((y * T - cy - 20) * 2), '#e03030', 22, '#fff'); }
-      if (Wd.banner) { const b = Wd.banner, a = b.t < 300 ? b.t / 300 : b.t > 2300 ? (2600 - b.t) / 300 : 1, w = M.tw(b.name, 15) + 28; ctx.save(); ctx.globalAlpha = Math.max(0, a); M.panel(ctx, 8, 8 - (1 - a) * 20, w, 30, 'dark'); M.text(ctx, b.name, 22, 14 - (1 - a) * 20, '#fff', 15); ctx.restore(); }
+      if (Wd.banner) { const b = Wd.banner, a = b.t < 300 ? b.t / 300 : b.t > 2300 ? (2600 - b.t) / 300 : 1, w = M.tw(b.name, 15) + 28; ctx.save(); ctx.globalAlpha = Math.max(0, a); M.panel(ctx, 8, 8 - (1 - a) * 20, w, 30, 'dark'); M.text(ctx, b.name, 22, 14 - (1 - a) * 20, '#fff', 15, '#101820'); ctx.restore(); }
+      const tracked = M.story.missions.find(q => q.id === G.flags.trackedMission && q.status(G) === 1);
+      if (tracked) { M.panel(ctx, 8, 270, 464, 42, 'dark'); M.text(ctx, 'MISSÃO: ' + tracked.name, 18, 275, '#ffe58a', 13, '#101820'); M.wrap('Destino: ' + (tracked.where ? tracked.where(G) : 'Consulte o diário.'), 430, 12).slice(0, 1).forEach((t, i) => M.text(ctx, t, 18, 292 + i * 13, '#fff', 12, '#101820')); }
     },
   };
   Wd.enter = (mapId, x, y, dir) => { Wd.build && !Object.keys(Wd.npcs).length && Wd.build(); Wd.load(mapId, x, y, dir); M.scene = Wd.scene; };
