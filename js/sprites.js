@@ -396,10 +396,39 @@
   }
   const personBase = SP.person;
   SP.person = function (p, dir, frame) {
-    return pixelArtSize(personBase(p, dir, frame), 24, 32);
+    const key = 'ow-person-' + JSON.stringify(p) + '-' + dir + '-' + frame;
+    if (owCache.has(key)) return owCache.get(key);
+    const [c, x] = mkc(16, 32);
+    x.imageSmoothingEnabled = false;
+    x.clearRect(0, 0, 16, 32);
+    // A arte humana mantém os pixels originais e ocupa 24 px dentro do canvas 16x32.
+    x.drawImage(personBase(p, dir, frame), 0, 8);
+    owCache.set(key, c);
+    return c;
   };
   const dogSmallBase = SP.dogSmall;
   SP.dogSmall = function (sp, dir, frame) {
-    return pixelArtSize(dogSmallBase(sp, dir, frame), 32, 32);
+    const key = 'ow-dog-' + sp.id + '-' + dir + '-' + frame;
+    if (owCache.has(key)) return owCache.get(key);
+    const [c, x] = mkc(16, 32);
+    x.imageSmoothingEnabled = false;
+    x.clearRect(0, 0, 16, 32);
+    // Os cães usam canvas alto de 2 tiles; a silhueta fica apoiada no chão.
+    x.drawImage(dogSmallBase(sp, dir, frame), 0, 8, 16, 24);
+    owCache.set(key, c);
+    return c;
   };
+  const owCache = new Map();
+  const walkDirs = ['down', 'up', 'left', 'right'];
+  const walkFrames = [0, 1, 2];
+  function makeWalkSheet(drawFrame, look) {
+    const [sheet, sx] = mkc(48, 128);
+    sx.imageSmoothingEnabled = false;
+    walkDirs.forEach((dir, row) => walkFrames.forEach((frame, col) => {
+      sx.drawImage(drawFrame(look, dir, frame), col * 16, row * 32);
+    }));
+    return sheet;
+  }
+  SP.personWalkSheet = function (look) { return makeWalkSheet((p, d, f) => SP.person(p, d, f), look); };
+  SP.dogWalkSheet = function (species) { return makeWalkSheet((p, d, f) => SP.dogSmall(p, d, f), species); };
 })(window.MD);
