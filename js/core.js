@@ -90,6 +90,11 @@ window.MD = window.MD || {};
     if (top) { if (top.key) top.key(a, e.repeat); }
     else if (M.scene && M.scene.key) { if (!e.repeat || ['up', 'down', 'left', 'right'].includes(a)) M.scene.key(a, e.repeat); }
   });
+  // WebAudio precisa de um gesto do usuário para iniciar em navegadores modernos.
+  // Clique/toque no jogo também libera e retoma a trilha que já foi solicitada na tela de título.
+  const unlockAudio = () => { if (M.audio) M.audio.unlock(); };
+  window.addEventListener('pointerdown', unlockAudio, { passive: true });
+  window.addEventListener('touchstart', unlockAudio, { passive: true });
   window.addEventListener('keyup', (e) => { const a = KEYMAP[e.code]; if (a) M.held[a] = false; });
   window.addEventListener('blur', () => { M.held = {}; });
 
