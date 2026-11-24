@@ -80,7 +80,7 @@
   };
 
   // ---------- Casa ----------
-  addNpc('casa_gabe', 'mae', 'Dona Lúcia', 7, 4, 'down', L('#f6d4c0', '#8a5a3a', 'bun', '#e87090', '#445'), { t: (n) => { const G = M.G; if (!fl('starter')) return M.say(n.name, 'Filha, o Zé te chamou lá na oficina! Disse que tem uma surpresa de quatro patas. Vai lá!'); healAll(); M.Save.save(); return M.say(n.name, 'Voltou, minha filha! Deixa eu cuidar dos bichinhos... Pronto, todo mundo descansado. E come alguma coisa, hein? Não vive só de pão de queijo!'); } });
+  addNpc('casa_gabe', 'mae', 'Dona Télia', 7, 4, 'down', L('#f6d4c0', '#8a5a3a', 'bun', '#e87090', '#445'), { t: (n) => { const G = M.G; if (!fl('starter')) return M.say(n.name, 'Filha, o Zé te chamou lá na oficina! Disse que tem uma surpresa de quatro patas. Vai lá!'); healAll(); M.Save.save(); return M.say(n.name, 'Voltou, minha filha! Deixa eu cuidar dos bichinhos... Pronto, todo mundo descansado. E come alguma coisa, hein? Não vive só de pão de queijo!'); } });
   H['@cama'] = async () => { healAll(); M.Save.save(); M.audio.sfx('heal'); await M.say(null, 'Gabe tirou um cochilo na cama. A equipe foi curada e o jogo foi salvo.'); };
   // cama e TV na casa
   { const m = MAPS.casa_gabe; for (const [x, y] of [[2, 2], [3, 2]]) m.say(x, y, '@cama'); m.say(2, 6, 'A TV passa o jornal: "Criaturas sorridentes e de aparência demoníaca foram vistas nas ruas de Cumbica. Moradores relatam risadas durante a madrugada."'); m.say(3, 6, 'A TV passa o jornal da hora: "Disputa por território entre grupos de cães assusta moradores de Cumbica." Hmm...'); }
@@ -120,8 +120,8 @@
   addNpc('cumbica', 'pedrinho', 'Pedrinho', 42, 41, 'left', L('#c89070', '#222', 'short', '#e0c030', '#33a'), { wander: 2, t: ['Dica de ouro, Gabe: cachorro com HP baixo aceita petisco mais fácil. Mas se machucar demais, ele foge!', 'E Brincalhão ama Brinquedo Favorito. Orgulhoso só vai de Coleira de Confiança. Anota aí!'] });
   addNpc('cumbica', 'guarda1', 'Guarda Cabral', 53, 41, 'down', L('#b88060', '#222', 'short', '#2a4a8a', '#2a2a4a', { cap: '#2a4a8a' }), { fixed: true, t: (n) => M.say(n.name, `Tô controlando as barreiras de Cumbica. Pra cada trecho novo, tem que ter insígnias: ${fl('badge1') ? 'a oeste e a Santos Dumont abriram' : 'tá fechadão'}. Já tem ${M.G.flags.badges || 0}. Volta quando tiver mais.`) });
   addNpc('cumbica', 'nena', 'Dona Nena', 38, 53, 'right', L('#e8c0a0', '#bbb', 'bun', '#f0a0c0', '#664', { extra: 'apron' }), { fixed: true, t: async (n) => { await M.say(n.name, 'Petisco fresquinho, filha! Biscoito Especial é receita secreta minha. Quer ver o cardápio?'); await UI.shop(D.SHOPS.petisco, 'PETISCOS DA DONA NENA'); await M.say(n.name, 'Volta sempre! E trata bem esses bichos.'); } });
-  const johnnyLook = L('#e8c0a0', '#3a2a20', 'short', '#345b9a', '#30303a', { extra: 'wheelchair', shoes: '#20202a' });
-  const gyroLook = L('#c89070', '#222', 'short', '#d8a020', '#343444', { extra: 'glasses' });
+  const johnnyLook = L('#f0c8a8', '#d8c08a', 'long', '#a9d9ef', '#b8d9e8', { extra: 'wheelchair', shoes: '#26384a', bandana: '#72c8e8', pattern: 'stars', emblem: 'horseshoe' });
+  const gyroLook = L('#d6a078', '#e6d5a8', 'long', '#542b82', '#392454', { extra: 'glasses', shoes: '#302044', cap: '#302b28', helmet: '#3a3028', pattern: 'green-orbs' });
   addNpc('cumbica', 'johnny_lasanha', 'Johnny', 45, 54, 'right', johnnyLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => M.say(n.name, 'Gyro, pega duas. Uma pra viagem e outra pra quando a viagem der errado.') });
   addNpc('cumbica', 'gyro_lasanha', 'Gyro', 46, 54, 'left', gyroLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => M.say(n.name, 'A lasanha é boa, Johnny. Mas não resolve nosso problema com aquele obstáculo na pista.') });
   const sceneNpc = (id) => (Wd.npcs.cumbica || []).find(x => x.id === id);
@@ -155,6 +155,8 @@
       johnny.look = Object.assign({}, johnny.look, { extra: 'crawl' });
       await M.say(null, 'A cadeira prende numa rachadura. Johnny cai de lado, levanta o polegar por meio segundo e começa a se arrastar lentamente para fora da cena.');
       await sceneWalk(johnny, 'down', 6, 650)();
+      await M.say('Gabe', '...Ele foi mesmo embora. Eu só queria um encontro... *snif*');
+      await M.say('Gabe', 'Mãe... Dona Télia tinha razão. Eu devia ter levado um casaquinho e menos expectativa.');
     }
     if (gyro) await sceneWalk(gyro, 'right', 5)();
     setf('rica_scene_done');
