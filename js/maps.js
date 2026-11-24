@@ -147,6 +147,10 @@
     // cones nas pontas das vias
     for (const [x, y] of [[50, 0], [51, 0], [52, 0], [50, 95], [51, 95], [52, 95], [0, 38], [0, 39], [0, 40], [103, 38], [103, 39], [103, 40], [0, 74], [0, 75], [103, 74], [103, 75], [78, 95], [79, 95], [80, 95]]) m.obj('cone', x, y);
 
+    // Karaokê fictício na área comercial: fachada e entrada para a cena especial.
+    d = m.bld(2, 64, 8, 4, 'purple', 2, { awning: true }); m.warp(d[0], d[1], 'karaoke', 7, 10, 'up');
+    m.fill('walk', 2, 68, 8, 2); m.sign(3, 69, 'KARAOKÊ CUMBICA — música alta, segredos mais altos ainda.');
+
     // ---- BARREIRAS (liberam conforme as insígnias) ----
     line('chain', 22, 2, 22, 53, (x, y) => y >= 36 && y <= 42); gate(22, 36, 1, 7, 1, 'O acesso ao Jardim Cumbica é pra quem já tem 1 insígnia.');
     line('chain', 23, 29, 47, 29, (x) => x === 40 || x === 41); m.fill('walk', 40, 29, 2, 1); gate(40, 29, 2, 1, 1, 'A trilha do Bosque dos Sapos só abre pra quem tem 1 insígnia.');
@@ -342,6 +346,12 @@
     m.obj('flag', 3, 2); m.obj('flag', 12, 2); m.obj('rack', 5, 2); m.obj('rack', 9, 2); m.obj('crate', 1, 4); m.obj('crate', 1, 5); m.obj('crate', 13, 4); m.obj('pallet', 13, 5); m.obj('barrel', 14, 8); m.obj('moto', 10, 8); m.obj('tires', 2, 9); m.obj('couch', 3, 7);
     m.fill('rug', 6, 3, 3, 1);
     m.warp(7, 10, 'cumbica', 64, 92, 'down');
+  })();
+
+  (() => {
+    const m = room('karaoke', 'Karaokê de Cumbica', 15, 13, 'tile', { music: 'story', wall: 'wallI' });
+    m.fill('rug', 3, 4, 9, 4); m.obj('table', 2, 3); m.obj('table', 11, 3); m.obj('counter', 7, 2); m.obj('couch', 2, 8); m.obj('couch', 10, 8); m.obj('tv', 6, 1); m.obj('plant', 1, 2); m.obj('plant', 13, 2);
+    m.warp(7, 11, 'cumbica', 6, 68, 'down');
   })();
 
   // ---- Ginásios (interiores) — 15x13, corredor central x=6..8 sempre livre ----
