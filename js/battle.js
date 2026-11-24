@@ -107,7 +107,7 @@
       if (G.dex && B.dogF.kind !== 'demon') G.dex.seen[B.dogF.sp] = 1; M.audio.sfx(B.dogF.kind === 'demon' ? 'alert' : 'bark'); await M.tween(B.fo, 'ox', 0, 380);
     };
     const sendPlayer = async (d, first) => {
-      B.dogP = d; d.stage = { atk: 0, def: 0, spd: 0 }; B.pl.hp = d.hp; B.pl.a = 1; B.pl.oy = 0; B.pl.sc = 1; B.pl.ox = -260; B.part.add(d.uid);
+      B.dogP = d; d.stage = { atk: d.nextBattleAtk ? 1 : 0, def: 0, spd: 0 }; if (d.nextBattleAtk) { d.nextBattleAtk = 0; } B.pl.hp = d.hp; B.pl.a = 1; B.pl.oy = 0; B.pl.sc = 1; B.pl.ox = -260; B.part.add(d.uid);
       await said(first ? `Vai, ${d.name}!` : `Vem, ${d.name}!`, 500); M.audio.sfx('bark'); await M.tween(B.pl, 'ox', 0, 380);
     };
     M.audio.sfx('battleStart'); for (let i = 0; i < 3; i++) { await M.tween(M.fx, 'flash', .8, 90); await M.tween(M.fx, 'flash', 0, 90); }
