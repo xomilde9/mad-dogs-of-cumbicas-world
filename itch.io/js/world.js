@@ -76,7 +76,7 @@
   Wd.encounter = async () => {
     const m = Wd.map(), z = m.zoneAt(Wd.p.x, Wd.p.y), tab = M.story.enc[z.enc]; if (!tab) return false;
     const tot = tab.reduce((a, b) => a + b[3], 0); let r = Math.random() * tot, pick = tab[0]; for (const e of tab) { r -= e[3]; if (r <= 0) { pick = e; break; } }
-    const lv = M.ri(pick[1], pick[2]); const demon = D.makeDemon(lv, z.enc); const r = await M.battle({ foes: [demon], wild: true, noRecruit: true, bg: z.bg }); if (r === 'lose') { await Wd.blackout(); return true; } await M.fadeIn(250); M.audio.play(Wd.map().music || 'cumbica'); return true;
+    const lv = M.ri(pick[1], pick[2]); const demon = D.makeDemon(lv, z.enc); const battleResult = await M.battle({ foes: [demon], wild: true, noRecruit: true, bg: z.bg }); if (battleResult === 'lose') { await Wd.blackout(); return true; } await M.fadeIn(250); M.audio.play(Wd.map().music || 'cumbica'); return true;
   };
 
   // ---------- treinadores ----------
