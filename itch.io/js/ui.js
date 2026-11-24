@@ -33,7 +33,7 @@
       adv() { const len = pages[pi].join('').length; if (shown < len) { shown = len; return; } if (pi < pages.length - 1) { pi++; shown = 0; wait = 0; M.audio.sfx('menu'); } else { this.fin = true; if (!this.keep) M.closeOv(this); res(); } },
       key(a) { if (this.fin) return; if (a === 'ok' || a === 'back') this.adv(); },
       draw(ctx) {
-        if (info && info.por) { M.rr(ctx, 10, 148, 72, 72, '#e8c660'); ctx.drawImage(info.por, 0, 0, 32, 32, 13, 151, 66, 66); }
+        if (info && info.por) { M.rr(ctx, 10, 148, 72, 72, '#e8c660'); SP.drawArt(ctx,info.por, 13, 151, 66, 66); }
         if (info && info.name) { const w = M.tw(info.name, 14) + 20; M.rr(ctx, info.por ? 86 : 10, 198, w, 22, '#e8c660'); M.rr(ctx, (info.por ? 86 : 10) + 2, 200, w - 4, 18, '#58418e'); M.text(ctx, info.name, (info.por ? 86 : 10) + 10, 201, '#fff', 14); }
         M.panel(ctx, 6, 222, 468, 94, 'light');
         let left = Math.floor(shown);
@@ -85,7 +85,7 @@
   // ---------- equipe ----------
   function dogRow(ctx, d, x, y, w, sel) {
     M.rr(ctx, x, y, w, 42, sel ? '#e8c660' : '#1a2640'); M.rr(ctx, x + 2, y + 2, w - 4, 38, d.hp <= 0 ? '#6a4a52' : '#f2ecd0');
-    ctx.drawImage(SP.dogBig(D.SPECIES[d.sp]), x + 6, y + 5, 40, 32);
+    SP.drawArt(ctx,SP.dogBig(D.SPECIES[d.sp]), x + 6, y + 5, 40, 32);
     M.text(ctx, d.name, x + 52, y + 4, DARK, 15); M.text(ctx, 'Nv' + d.lv, x + 52, y + 22, '#4a4a5a', 12);
     const mx = D.stats(d).hp; M.text(ctx, 'HP', x + w - 190, y + 6, '#c04040', 12); M.hpBar(ctx, x + w - 170, y + 9, 120, 7, d.hp / mx);
     M.text(ctx, `${d.hp}/${mx}`, x + w - 170, y + 22, DARK, 13); if (d.st) M.text(ctx, d.st.toUpperCase(), x + w - 90, y + 22, '#c04040', 12);
@@ -135,7 +135,7 @@
       key(a) { if (a === 'ok' || a === 'back') { M.audio.sfx('back'); M.closeOv(ov); res(); } },
       draw(ctx) {
         bg(ctx, '#2a4a5a', '#223e4e'); head(ctx, 'RESUMO');
-        M.panel(ctx, 8, 32, 176, 150, 'hud'); ctx.drawImage(SP.dogBig(sp), 24, 46, 144, 112);
+        M.panel(ctx, 8, 32, 176, 150, 'hud'); SP.drawArt(ctx,SP.dogBig(sp), 24, 46, 144, 112);
         M.text(ctx, d.name, 20, 164, DARK, 15); M.text(ctx, 'Nv' + d.lv, 140, 164, DARK, 15);
         chip(ctx, sp.type, 14, 190); M.text(ctx, sp.breed, 14, 208, '#e8f0ff', 13); M.text(ctx, `Raridade: ${D.RAR[sp.rar]}`, 14, 224, '#e8f0ff', 13); M.text(ctx, `Origem: ${sp.reg}`, 14, 240, '#e8f0ff', 13);
         M.text(ctx, `Personalidade: ${sp.pers}`, 14, 256, '#f8e8a0', 13);
@@ -268,7 +268,7 @@
       draw(ctx) {
         bg(ctx, '#3a2a4a', '#301e40'); head(ctx, tab ? 'TABELA DE AFINIDADES' : 'PERFIL');
         if (!tab) {
-          M.panel(ctx, 8, 32, 150, 150, 'hud'); ctx.drawImage(SP.portrait(SP.GABE, true), 0, 0, 32, 32, 18, 40, 130, 130);
+          M.panel(ctx, 8, 32, 150, 150, 'hud'); SP.drawArt(ctx,SP.portrait(SP.GABE, true), 18, 40, 130, 130);
           M.panel(ctx, 166, 32, 306, 150, 'light'); const t = Math.floor(G.time / 1000), hh = Math.floor(t / 3600), mm = Math.floor(t / 60) % 60, owned = new Set(G.party.concat(G.kennel).map(d => d.sp)).size, tot = D.SPECIES.length - 1;
           [['Nome', 'GABE'], ['Dinheiro', 'R$ ' + G.money], ['Tempo de jogo', `${hh}h ${String(mm).padStart(2, '0')}min`], ['Equipe / Canil', `${G.party.length} / ${G.kennel.length}`], ['Espécies recrutadas', `${owned}/${tot}`], ['Insígnias', `${G.flags.badges || 0}/8`], ['Patente', (G.flags.badges || 0) >= 8 ? 'Campeã de Cumbica' : (G.flags.badges || 0) >= 4 ? 'Mad Dog Veterana' : 'Mad Dog Novata']].forEach((r, i) => { M.text(ctx, r[0], 180, 40 + i * 20, '#4a4a5a', 13); M.text(ctx, r[1], 462 - M.tw(r[1], 13), 40 + i * 20, DARK, 13); });
           M.panel(ctx, 8, 190, 464, 98, 'light'); M.text(ctx, 'INSÍGNIAS DE CUMBICA', 20, 196, DARK, 13);
@@ -365,7 +365,7 @@
         ctx.fillStyle = '#ffe9a0'; for (let i = 0; i < 40; i++) ctx.fillRect(((i * 41) % 480) | 0, 150 + (i * 17) % 50, 2, 2);
         ctx.fillStyle = '#4a4e5a'; ctx.fillRect(0, 214, W, 106); ctx.fillStyle = '#5a5e6a'; ctx.fillRect(0, 214, W, 8); ctx.fillStyle = '#e8c840'; for (let x = 0; x < W; x += 40) ctx.fillRect((x - (t / 10) % 40), 270, 24, 4);
         const bob = Math.floor(t / 150) % 2, gx = 190;
-        ctx.drawImage(SP.person(SP.GABE, 'right', 1 + bob), gx, 236, 48, 72); dogs.forEach((d, i) => ctx.drawImage(SP.dogSmall(d, 'right', 1 + (Math.floor(t / 120 + i) % 2)), gx - 44 - i * 36, 268 + (i % 2) * 8, 32, 32));
+        SP.drawArt(ctx,SP.person(SP.GABE, 'right', 1 + bob), gx, 236, 48, 72); dogs.forEach((d, i) => SP.drawArt(ctx,SP.dogSmall(d, 'right', 1 + (Math.floor(t / 120 + i) % 2)), gx - 44 - i * 36, 268 + (i % 2) * 8, 32, 32));
         for (const [txt, y, s, col] of [['MAD DOGS', 22, 54, '#f8e070'], ["OF CUMBICA'S", 82, 26, '#ffffff'], ['W O R L D', 112, 22, '#ff9ac0']]) { const w = M.tw(txt, s); for (const [dx, dy] of [[-2, 0], [2, 0], [0, -2], [0, 2], [2, 2]]) M.text(ctx, txt, (W - w) / 2 + dx, y + dy, '#2a1030', s); M.text(ctx, txt, (W - w) / 2, y, col, s); }
         if (state === 'press') { if (Math.floor(t / 500) % 2) { const s = 'PRESSIONE ENTER'; M.text(ctx, s, (W - M.tw(s, 16)) / 2, 190, '#fff', 16, '#000'); } }
         else { M.panel(ctx, 150, 140, 180, 82); ['NOVO JOGO', 'CONTINUAR', 'CONFIGURAÇÕES'].forEach((s, i) => { if (i === c) tri(ctx, 160, 154 + i * 22); M.text(ctx, s, 176, 150 + i * 22, i === 1 && !hasSave ? '#9a9aa4' : DARK, 14); }); }
