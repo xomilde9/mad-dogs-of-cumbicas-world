@@ -352,8 +352,8 @@
     dcache.set(key, c); return c;
   };
   // ---------------- ESCALA DE SPRITES: proporção RPG portátil ----------------
-  // Mantém a arte procedural original, mas amplia por vizinho mais próximo:
-  // personagens passam a ocupar 24x32 px e cães 24x24 px, com pixels nítidos.
+  // Amplia por vizinho mais próximo para preservar pixels duros e contornos limpos.
+  // Pessoas: 24x32 px. Cachorros: 32x32 px, com silhueta mais legível no mapa.
   const pixelArtCache = new WeakMap();
   function pixelArtSize(source, width, height) {
     if (!source) return source;
@@ -374,6 +374,6 @@
   };
   const dogSmallBase = SP.dogSmall;
   SP.dogSmall = function (sp, dir, frame) {
-    return pixelArtSize(dogSmallBase(sp, dir, frame), 24, 24);
+    return pixelArtSize(dogSmallBase(sp, dir, frame), 32, 32);
   };
 })(window.MD);
