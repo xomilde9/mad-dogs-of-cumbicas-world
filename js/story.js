@@ -122,8 +122,8 @@
   addNpc('cumbica', 'nena', 'Dona Nena', 38, 53, 'right', L('#e8c0a0', '#bbb', 'bun', '#f0a0c0', '#664', { extra: 'apron' }), { fixed: true, t: async (n) => { await M.say(n.name, 'Petisco fresquinho, filha! Biscoito Especial é receita secreta minha. Quer ver o cardápio?'); await UI.shop(D.SHOPS.petisco, 'PETISCOS DA DONA NENA'); await M.say(n.name, 'Volta sempre! E trata bem esses bichos.'); } });
   const johnnyLook = L('#f0c8a8', '#d8c08a', 'long', '#a9d9ef', '#b8d9e8', { extra: 'wheelchair', shoes: '#26384a', bandana: '#72c8e8', pattern: 'stars', emblem: 'horseshoe' });
   const gyroLook = L('#d6a078', '#e6d5a8', 'long', '#542b82', '#392454', { extra: 'glasses', shoes: '#302044', cap: '#302b28', helmet: '#3a3028', pattern: 'green-orbs' });
-  addNpc('cumbica', 'johnny_lasanha', 'Johnny', 45, 54, 'right', johnnyLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => M.say(n.name, 'Gyro, pega duas. Uma pra viagem e outra pra quando a viagem der errado.') });
-  addNpc('cumbica', 'gyro_lasanha', 'Gyro', 46, 54, 'left', gyroLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => M.say(n.name, 'A lasanha é boa, Johnny. Mas não resolve nosso problema com aquele obstáculo na pista.') });
+  addNpc('cumbica', 'johnny_lasanha', 'Johnny', 45, 54, 'right', johnnyLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => ricaScene(sceneNpc('rica_games') || n) });
+  addNpc('cumbica', 'gyro_lasanha', 'Gyro', 46, 54, 'left', gyroLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => ricaScene(sceneNpc('rica_games') || n) });
   const sceneNpc = (id) => (Wd.npcs.cumbica || []).find(x => x.id === id);
   const sceneWalk = (n, dir, steps, delay = 150) => async () => {
     for (let i = 0; i < steps; i++) {
@@ -133,11 +133,11 @@
     }
   };
   const ricaScene = async (n) => {
-    const johnny = sceneNpc('johnny_lasanha'), gyro = sceneNpc('gyro_lasanha');
-    await M.say(n.name, 'Ô RAPÁ! Duas Lasanhas Pif Paf? Pensei que ia ficar rico nessa porra rapá.');
+    const johnny = sceneNpc('johnny_lasanha'), gyro = sceneNpc('gyro_lasanha'), seller = sceneNpc('rica_games') || n;
+    await M.say(seller.name, 'Ô RAPÁ! Duas Lasanhas Pif Paf? Pensei que ia ficar rico nessa porra rapá.');
     await M.say('Johnny', 'Duas, Rica. Uma pra mim e outra pro Gyro. A gente precisa de energia pra corrida.');
     await M.say('Gyro', 'Energia, não. Precisamos de um milagre embalado em plástico.');
-    await M.say(n.name, 'LEVANTA DAI RAPAZ! LEVANTA! A lasanha tá gelada e o micro-ondas tá trabalhando no limite!');
+    await M.say(seller.name, 'LEVANTA DAI RAPAZ! LEVANTA! A lasanha tá gelada e o micro-ondas tá trabalhando no limite!');
     await M.say('Gabe', 'Oi! Vocês tão falando de corrida?');
     await M.say('Johnny', 'A pista perto do viaduto tá um inferno. Um Demônio Zombeteiro espalhou cones, óleo e umas placas que mudam de lugar.');
     await M.say('Gyro', 'O pior é o Cone Supremo. Você tenta passar pela esquerda, ele aparece na direita. Tenta pela direita, ele cobra pedágio.');
@@ -158,7 +158,7 @@
       await M.say('Gabe', '...Ele foi mesmo embora. Eu só queria um encontro... *snif*');
       await M.say('Gabe', 'Mãe... Dona Télia tinha razão. Eu devia ter levado um casaquinho e menos expectativa.');
     }
-    if (gyro) await sceneWalk(gyro, 'right', 5)();
+    // Gyro permanece ao lado do local onde Johnny estava, visível após a cena.
     setf('rica_scene_done');
     await M.say(n.name, '...Quem é esse daí, Tico Loko? Ah, é você, Gabe. Vai querer a lasanha ou vai ficar só assistindo o drama?');
     await UI.shop(D.SHOPS.ricaGames, 'RICA GAMES — LASANHA PIF PAF');
