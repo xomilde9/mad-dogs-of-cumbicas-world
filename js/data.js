@@ -117,6 +117,7 @@
     brinquedo: { name: 'Brinquedo Favorito', cat: 'Recrutar', price: 100, mult: 1.4, trust: 22, desc: 'Bolinha que apita. Brincalhões adoram.' },
     coleira: { name: 'Coleira de Confiança', cat: 'Recrutar', price: 400, mult: 2.8, trust: 40, desc: 'A melhor chance de recrutar. Cara, mas vale.' },
     agua: { name: 'Água Fresca', cat: 'Cura', price: 40, heal: 25, desc: 'Recupera 25 de HP.' },
+    lasanhaPifPaf: { name: 'Lasanha Pif Paf', cat: 'Cura', price: 180, heal: 95, desc: 'Lasanha congelada do Rica Games. Recupera 95 de HP.' },
     racaoR: { name: 'Ração Reforçada', cat: 'Cura', price: 100, heal: 70, desc: 'Recupera 70 de HP.' },
     osso: { name: 'Osso Revivedor', cat: 'Cura', price: 220, revive: 0.5, desc: 'Reanima um cachorro com metade do HP.' },
     chave: { name: 'Chave do Galpão', cat: 'Chave', key: true, desc: 'Abre a porta do Galpão Abandonado.' },
@@ -124,7 +125,7 @@
     peca: { name: 'Peça da Moto', cat: 'Chave', key: true, desc: 'Um carburador. O Zé está atrás disso.' },
     foto: { name: 'Foto Antiga', cat: 'Chave', key: true, desc: 'Foto da Praça dos Cachorros nos anos 90.' },
   };
-  D.SHOPS = { mercado: ['agua', 'racaoR', 'osso', 'petisco'], petisco: ['petisco', 'racao', 'biscoito', 'brinquedo', 'coleira'] };
+  D.SHOPS = { mercado: ['agua', 'racaoR', 'osso', 'petisco'], petisco: ['petisco', 'racao', 'biscoito', 'brinquedo', 'coleira'], ricaGames: ['lasanhaPifPaf'] };
 
   // ---------- criação / stats ----------
   let uid = 1;
