@@ -165,6 +165,9 @@
     await M.say(n.name, 'Volta sempre, rapá! E cuidado com os cones, que eles tão tudo de golpe.');
   };
   addNpc('cumbica', 'rica_games', 'Rica Games', 20, 64, 'down', L('#b97855', '#30252a', 'bald', '#b97855', '#8a6038', { extra: 'sunglasses', shirtless: true, shoulderCloth: '#a66b32', shoes: '#493322' }), { fixed: true, t: async (n) => { if (!fl('rica_scene_done')) return ricaScene(n); await M.say(n.name, 'Ô RAPÁ! Lasanha Pif Paf! Pensei que ia ficar rico nessa porra rapá.'); await M.say(n.name, 'LEVANTA DAI RAPAZ! LEVANTA!'); await UI.shop(D.SHOPS.ricaGames, 'RICA GAMES — LASANHA PIF PAF'); await M.say(n.name, 'Quem é esse dai Tico Loko? ...Ah, é você de novo! Volta sempre, rapá.'); } });
+  const mikuStreetLook = L('#f4d0b8', '#35c9d0', 'long', '#d5f2ee', '#344b78', { extra: 'miku', shoes: '#222b48' });
+  addNpc('cumbica', 'miku_cameo_praca', 'Hatsune Miku', 33, 50, 'down', mikuStreetLook, { fixed: true, when: () => !fl('john_revealed'), t: () => M.narr('A garota de cabelo azul está cantarolando baixinho, distraída demais para notar Gabe.') });
+  addNpc('cumbica', 'miku_cameo_comercio', 'Hatsune Miku', 28, 61, 'left', mikuStreetLook, { fixed: true, when: () => !fl('john_revealed'), t: () => M.narr('Gabe reconhece a garota de cabelo azul ao longe, mas ela entra numa loja antes que dê para alcançá-la.') });
   const karaokeHostLook = L('#d7a17d', '#24202a', 'short', '#f0f0e8', '#333344', { extra: 'stout' });
   const goromiLook = L('#f0c8a8', '#24202a', 'long', '#d84b82', '#402038', { extra: 'goromi', shoes: '#33202d' });
   const mikuLook = L('#f4d0b8', '#35c9d0', 'long', '#d5f2ee', '#344b78', { extra: 'miku', shoes: '#222b48' });
