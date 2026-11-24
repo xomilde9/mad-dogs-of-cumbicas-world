@@ -184,14 +184,20 @@
       R(x, eye, 5, 7, 1, 2); R(x, '#c06a6a', 4, 10, 2, 1); if (p.blush) R(x, '#e8a0a0', 6, 9, 1, 1);
       if (p.extra === 'beard') R(x, p.beard || '#ccc', 4, 9, 6, 3);
       if (p.extra === 'glasses') { R(x, '#222', 3, 6, 4, 1); R(x, '#222', 4, 6, 1, 3); }
-      R(x, sh, 7, 12 + aL, 2, 3); R(x, sk, 7, 15 + aL, 2, 2);
+      // Braço visível acompanha a passada no perfil; a mão alterna um pixel.
+      R(x, sh, 7, 12 + aL, 2, 3);
+      R(x, shd, 7, 14 + aL, 2, 1);
+      R(x, sk, 7, 15 + aL, 2, 2);
       if (long) { R(x, hr, 8, 11, 3, 5); R(x, hrd, 10, 12, 1, 4); }
       if (bun) R(x, hr, 7, 0, 4, 2);
     } else {
       const le = f === 1 ? 22 : 23, re = f === 2 ? 22 : 23;
       if (long) R(x, hrd, 3, 4, 10, 14);
       R(x, pa, 5, 18, 3, le - 19); R(x, so, 5, le - 1, 3, 2); R(x, pa, 8, 18, 3, re - 19); R(x, so, 8, re - 1, 3, 2);
-      R(x, sh, 4, 12, 8, 6); R(x, shd, 4, 17, 8, 1); arms(3, 12);
+      R(x, sh, 4, 12, 8, 6); R(x, shd, 4, 17, 8, 1);
+      // Costura central e luz no ombro dão leitura ao tronco em escala 16x32.
+      R(x, M.shade(sh, 1.12), 5, 13, 2, 1); R(x, shd, 7, 15, 2, 1);
+      arms(3, 12);
       if (dir === 'down') {
         R(x, sk, 4, 3, 8, 9); R(x, sk, 3, 5, 1, 3); R(x, sk, 12, 5, 1, 3);
         R(x, hr, 3, 2, 10, 3); R(x, hr, 3, 4, 2, long ? 9 : 4); R(x, hr, 11, 4, 2, long ? 9 : 4);
