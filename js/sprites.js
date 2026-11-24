@@ -240,7 +240,7 @@
     outline(c, '#2a2030');
     pcache.set(key, c); return c;
   };
-  SP.GABE = { skin: '#f6d4c0', hair: '#e8b2a2', style: 'bun', shirt: '#f2f2f2', pants: '#2a2a38', shoes: '#ececec', blush: true };
+  SP.GABE = { skin: '#f6d4c0', hair: '#f2cf62', style: 'bun', shirt: '#f2f2f2', pants: '#2a2a38', shoes: '#ececec', blush: true }; // cabelo loiro dourado
 
   // ---------------- RETRATOS 32x32 ----------------
   const porCache = new Map();
