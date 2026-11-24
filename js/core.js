@@ -77,7 +77,7 @@ window.MD = window.MD || {};
 
   // ---------- input ----------
   const KEYMAP = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right',
-    KeyZ: 'ok', Enter: 'ok', NumpadEnter: 'ok', Space: 'ok', KeyX: 'back', Escape: 'back', Backspace: 'back', KeyI: 'bag', KeyM: 'map', KeyQ: 'quest', Tab: 'menu' };
+    KeyZ: 'ok', Enter: 'ok', NumpadEnter: 'ok', Space: 'ok', KeyX: 'back', Escape: 'back', Backspace: 'back', KeyI: 'bag', KeyM: 'map', KeyQ: 'quest', KeyE: 'track', Tab: 'menu' };
   M.held = {}; M.ov = []; M.scene = null;
   M.openOv = (o) => { M.ov.push(o); return o; };
   M.closeOv = (o) => { const i = M.ov.indexOf(o); if (i >= 0) M.ov.splice(i, 1); };
