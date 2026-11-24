@@ -401,8 +401,11 @@
     const [c, x] = mkc(16, 32);
     x.imageSmoothingEnabled = false;
     x.clearRect(0, 0, 16, 32);
-    // A arte humana mantém os pixels originais e ocupa 24 px dentro do canvas 16x32.
-    x.drawImage(personBase(p, dir, frame), 0, 8);
+    // Canvas GBA de 1x2 tiles: 16x32. O desenho humano-base tem 16x24
+    // e é apoiado na linha do chão; os quadros 1/2 alternam a passada.
+    const walkBob = frame === 1 ? 0 : frame === 2 ? 1 : 0;
+    const walkShift = dir === 'left' ? -1 : dir === 'right' ? 1 : 0;
+    x.drawImage(personBase(p, dir, frame), walkShift, 8 - walkBob);
     owCache.set(key, c);
     return c;
   };
