@@ -3,6 +3,8 @@
 (function (M) {
   const SP = M.spr, D = M.D, T = 16, W = M.W, H = M.H, UI = M.ui;
   const DIRS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
+  // Campo de visão GBA: 15x10 tiles (240x160 px). O render do mundo é ampliado 2x na tela 480x320.
+  const VIEW_TILES_X = 15, VIEW_TILES_Y = 10, TRAINER_SIGHT_MAX = 7;
   const OPP = { up: 'down', down: 'up', left: 'right', right: 'left' };
   const STEP_MS = 125;
   const Wd = M.world = { busy: false, npcs: {}, banner: null, p: null, lastZone: null, since: 0, bump: 0, cam: [0, 0] };
@@ -91,7 +93,8 @@
   };
   const lineOfSight = (n) => {
     if (!n.tr || isDone(n) || !n.tr.sight || !visible(n) || !M.G.party.some(d => d.hp > 0)) return false;
-    const [dx, dy] = DIRS[n.dir]; for (let k = 1; k <= n.tr.sight; k++) { const x = n.x + dx * k, y = n.y + dy * k; if (Wd.p.x === x && Wd.p.y === y) return true; if (solidAt(x, y, 'n') && !(Wd.p.x === x && Wd.p.y === y)) return false; }
+    const [dx, dy] = DIRS[n.dir], sight = M.clamp(Math.floor(n.tr.sight), 0, TRAINER_SIGHT_MAX);
+    for (let k = 1; k <= sight; k++) { const x = n.x + dx * k, y = n.y + dy * k; if (Wd.p.x === x && Wd.p.y === y) return true; if (solidAt(x, y, 'n') && !(Wd.p.x === x && Wd.p.y === y)) return false; }
     return false;
   };
 
@@ -171,7 +174,7 @@
       const m = Wd.map(), p = Wd.p; if (!m || !p) return; const G = M.G;
       const lerp = (o) => o.mv ? [o.mv.fx + (o.mv.tx - o.mv.fx) * Math.min(1, o.mv.t / STEP_MS), o.mv.fy + (o.mv.ty - o.mv.fy) * Math.min(1, o.mv.t / STEP_MS)] : [o.x, o.y];
       const [ppx, ppy] = p.mv ? lerp(p) : [p.x, p.y];
-      const mw = m.w * T, mh = m.h * T, vw = W / 2, vh = H / 2;
+      const mw = m.w * T, mh = m.h * T, vw = VIEW_TILES_X * T, vh = VIEW_TILES_Y * T;
       let cx = mw > vw ? M.clamp(Math.round(ppx * T + 8 - vw / 2), 0, mw - vw) : -Math.round((vw - mw) / 2), cy = mh > vh ? M.clamp(Math.round(ppy * T + 8 - vh / 2), 0, mh - vh) : -Math.round((vh - mh) / 2);
       Wd.cam = [cx, cy];
       ctx.fillStyle = '#0a0a12'; ctx.fillRect(0, 0, W, H);
