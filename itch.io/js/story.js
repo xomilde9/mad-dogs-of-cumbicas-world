@@ -122,12 +122,13 @@
   addNpc('cumbica', 'nena', 'Dona Nena', 38, 53, 'right', L('#e8c0a0', '#bbb', 'bun', '#f0a0c0', '#664', { extra: 'apron' }), { fixed: true, t: async (n) => { await M.say(n.name, 'Petisco fresquinho, filha! Biscoito Especial é receita secreta minha. Quer ver o cardápio?'); await UI.shop(D.SHOPS.petisco, 'PETISCOS DA DONA NENA'); await M.say(n.name, 'Volta sempre! E trata bem esses bichos.'); } });
   const johnnyLook = L('#f0c8a8', '#d8c08a', 'long', '#a9d9ef', '#b8d9e8', { extra: 'wheelchair', shoes: '#26384a', bandana: '#72c8e8', pattern: 'stars', emblem: 'horseshoe' });
   const gyroLook = L('#d6a078', '#e6d5a8', 'long', '#542b82', '#392454', { extra: 'glasses', shoes: '#302044', cap: '#302b28', helmet: '#3a3028', pattern: 'green-orbs' });
-  addNpc('cumbica', 'johnny_lasanha', 'Johnny', 45, 54, 'right', johnnyLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => ricaScene(sceneNpc('rica_games') || n) });
-  addNpc('cumbica', 'gyro_lasanha', 'Gyro', 46, 54, 'left', gyroLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => ricaScene(sceneNpc('rica_games') || n) });
+  addNpc('cumbica', 'johnny_lasanha', 'Johnny', 18, 64, 'right', johnnyLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => ricaScene(sceneNpc('rica_games') || n) });
+  addNpc('cumbica', 'gyro_lasanha', 'Gyro', 19, 64, 'left', gyroLook, { fixed: true, when: () => !fl('rica_scene_done'), t: (n) => ricaScene(sceneNpc('rica_games') || n) });
   const sceneNpc = (id) => (Wd.npcs.cumbica || []).find(x => x.id === id);
   const sceneWalk = (n, dir, steps, delay = 150) => async () => {
     for (let i = 0; i < steps; i++) {
       const [dx, dy] = ({ up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] })[dir];
+      if (Wd.solidAt && Wd.solidAt(n.x + dx, n.y + dy, 'n')) break;
       await new Promise(resolve => { n.dir = dir; n.mv = { fx: n.x, fy: n.y, tx: n.x + dx, ty: n.y + dy, t: 0, done: resolve }; });
       if (delay > 150) await M.wait(delay - 125);
     }
@@ -151,10 +152,9 @@
     await M.say('Gyro', 'Johnny, cuidado com a rampa.');
     await M.say('Johnny', 'EU SEI USAR UMA RAMPA—');
     if (johnny) {
-      await sceneWalk(johnny, 'down', 2)();
       johnny.look = Object.assign({}, johnny.look, { extra: 'crawl' });
       await M.say(null, 'A cadeira prende numa rachadura. Johnny cai de lado, levanta o polegar por meio segundo e começa a se arrastar lentamente para fora da cena.');
-      await sceneWalk(johnny, 'down', 6, 650)();
+      await sceneWalk(johnny, 'left', 6, 650)();
       await M.say('Gabe', '...Ele foi mesmo embora. Eu só queria um encontro... *snif*');
       await M.say('Gabe', 'Mãe... Dona Télia tinha razão. Eu devia ter levado um casaquinho e menos expectativa.');
     }
@@ -164,7 +164,7 @@
     await UI.shop(D.SHOPS.ricaGames, 'RICA GAMES — LASANHA PIF PAF');
     await M.say(n.name, 'Volta sempre, rapá! E cuidado com os cones, que eles tão tudo de golpe.');
   };
-  addNpc('cumbica', 'rica_games', 'Rica Games', 47, 55, 'down', L('#b97855', '#30252a', 'bald', '#b97855', '#8a6038', { extra: 'sunglasses', shirtless: true, shoulderCloth: '#a66b32', shoes: '#493322' }), { fixed: true, t: async (n) => { if (!fl('rica_scene_done')) return ricaScene(n); await M.say(n.name, 'Ô RAPÁ! Lasanha Pif Paf! Pensei que ia ficar rico nessa porra rapá.'); await M.say(n.name, 'LEVANTA DAI RAPAZ! LEVANTA!'); await UI.shop(D.SHOPS.ricaGames, 'RICA GAMES — LASANHA PIF PAF'); await M.say(n.name, 'Quem é esse dai Tico Loko? ...Ah, é você de novo! Volta sempre, rapá.'); } });
+  addNpc('cumbica', 'rica_games', 'Rica Games', 20, 64, 'down', L('#b97855', '#30252a', 'bald', '#b97855', '#8a6038', { extra: 'sunglasses', shirtless: true, shoulderCloth: '#a66b32', shoes: '#493322' }), { fixed: true, t: async (n) => { if (!fl('rica_scene_done')) return ricaScene(n); await M.say(n.name, 'Ô RAPÁ! Lasanha Pif Paf! Pensei que ia ficar rico nessa porra rapá.'); await M.say(n.name, 'LEVANTA DAI RAPAZ! LEVANTA!'); await UI.shop(D.SHOPS.ricaGames, 'RICA GAMES — LASANHA PIF PAF'); await M.say(n.name, 'Quem é esse dai Tico Loko? ...Ah, é você de novo! Volta sempre, rapá.'); } });
   addNpc('cumbica', 'picole', 'Seu Raimundo', 43, 52, 'down', L('#a06848', '#222', 'short', '#fff', '#44a', { cap: '#e04040' }), { wander: 1, t: ['Picolé de limão, 2 reais! ...ah, não vendo pra cachorro. Pergunta pro Pipoca se ele reclama.', 'Dizem que um caramelo dourado aparece na Praça Cummins uma vez na vida. Eu nunca vi, mas meu primo jura que sim.'] });
   addNpc('cumbica', 'helena', 'Dra. Helena', 41, 66, 'down', L('#f0d0b8', '#3a2a20', 'long', '#fff', '#3a8a8a', { extra: 'glasses' }), { fixed: true, t: ['Sou veterinária. Dica de laboratório: cada tipo tem seus pontos fracos. Mais ou menos assim: Veloz bate Selvagem e perde pra Guardião...', 'Abre o Perfil no menu (Esc/Tab → Perfil) e vai na aba Afinidades: tem a tabelinha completa.'] });
   addNpc('cumbica', 'tiozinho', 'Tiozinho do Bar', 30, 63, 'down', L('#c89070', '#444', 'bald', '#885', '#444', { extra: 'beard', beard: '#aaa' }), { wander: 1, t: ['Tem uns caras de coleira preta rondando a Cidade Industrial. Coleira Negra, chamam. Ninguém sabe quem manda neles. "O Dono", dizem.', 'Eu não me meto. Só vendo pão com mortadela.'] });
