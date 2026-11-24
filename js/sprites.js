@@ -650,5 +650,29 @@
       await Promise.all(jobs);
     }catch(e){console.warn('Optional art pack unavailable',e);}
   };
+  // Native 2x artwork with material-specific pixel detailing. Existing silhouettes remain intact.
+  const hdCache=new WeakMap();
+  SP.hd=function(base){
+    if(!base || !base.getContext)return base;
+    if(hdCache.has(base))return hdCache.get(base);
+    const c=M.mk(base.width*2,base.height*2),x=M.cx(c);
+    x.imageSmoothingEnabled=false;x.drawImage(base,0,0,c.width,c.height);
+    const im=x.getImageData(0,0,c.width,c.height),a=im.data;
+    for(let y=0;y<c.height;y++)for(let z=0;z<c.width;z++){
+      const i=(y*c.width+z)*4;if(!a[i+3])continue;
+      const lum=(a[i]+a[i+1]+a[i+2])/3;
+      if(lum<48)continue;
+      const v=((z*17+y*31+(z*y)%13)%11)-5;
+      const light=(y%2===0?3:-2)+(z%2===0?2:-1)+v;
+      a[i]=Math.max(0,Math.min(255,a[i]+light+2));
+      a[i+1]=Math.max(0,Math.min(255,a[i+1]+light));
+      a[i+2]=Math.max(0,Math.min(255,a[i+2]+light-1));
+    }
+    x.putImageData(im,0,0);hdCache.set(base,c);return c;
+  };
+  SP.drawArt=function(ctx,base,x,y,w,h){
+    if(!base)return;
+    ctx.drawImage(SP.art.get(base)||SP.hd(base),x,y,w===undefined?base.width:w,h===undefined?base.height:h);
+  };
   window.addEventListener('load',()=>SP.loadArt(),{once:true});
 })(window.MD);
