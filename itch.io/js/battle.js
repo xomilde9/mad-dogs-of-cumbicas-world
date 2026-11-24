@@ -74,8 +74,8 @@
       ctx.restore();
     }
     function sprite(ctx, dog, S, x, y, sc, flip) {
-      if (!dog) return; const img = SP.dogBig(D.SPECIES[dog.sp]); ctx.save(); ctx.globalAlpha = S.a * (S.blink && Math.floor(performance.now() / 70) % 2 ? .25 : 1);
-      ctx.translate(x + S.ox, y + S.oy); ctx.scale((flip ? -1 : 1) * sc * S.sc, sc * S.sc); ctx.drawImage(img, -20, -32); ctx.restore();
+      if (!dog) return; const img = SP.battleDog(D.SPECIES[dog.sp]); ctx.save(); ctx.globalAlpha = S.a * (S.blink && Math.floor(performance.now() / 70) % 2 ? .25 : 1);
+      ctx.translate(x + S.ox, y + S.oy); ctx.scale((flip ? -1 : 1) * sc * S.sc, sc * S.sc); ctx.drawImage(img, -32, -64, 64, 64); ctx.restore();
     }
     function hud(ctx, d, S, x, y, mine) {
       if (!d) return; const mx = D.stats(d).hp; M.panel(ctx, x, y, 200, mine ? 70 : 58, 'light');
@@ -87,8 +87,8 @@
     }
     function draw(ctx) {
       ctx.drawImage(bgImg(B.bg), 0, 0);
-      if (B.trainerShow > 0 && B.trainer && B.trainer.por) { ctx.save(); ctx.globalAlpha = Math.min(1, B.trainerShow); ctx.drawImage(B.trainer.por, 0, 0, 32, 32, 330 + (1 - Math.min(1, B.trainerShow)) * 80, 70, 96, 96); ctx.restore(); }
-      sprite(ctx, B.dogF, B.fo, 372, 148, 2, false); sprite(ctx, B.dogP, B.pl, 112, 208, 3, true);
+      if (B.trainerShow > 0 && B.trainer && B.trainer.por) { ctx.save(); ctx.globalAlpha = Math.min(1, B.trainerShow); ctx.drawImage(SP.battlePortrait(B.trainer.por), 0, 0, 64, 64, 330 + (1 - Math.min(1, B.trainerShow)) * 80, 70, 96, 96); ctx.restore(); }
+      sprite(ctx, B.dogF, B.fo, 372, 148, 1.4, false); sprite(ctx, B.dogP, B.pl, 112, 208, 2.1, true);
       B.fxs.forEach(f => fxDraw(ctx, f));
       if (B.ball) { const b = B.ball; ctx.fillStyle = '#e8c860'; ctx.beginPath(); ctx.arc(b.x, b.y, 6, 0, 7); ctx.fill(); ctx.strokeStyle = '#6a4a1a'; ctx.lineWidth = 2; ctx.stroke(); }
       if (B.dogF && B.fo.a > 0 && !B.hideHud) hud(ctx, B.dogF, B.fo, 12, 12, false);
